@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>صانع لوحات النادي الفيصلي</title>
+<script src="js/fonts.js"></script>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<aside id="side"></aside>
+<main>
+  <div class="toolbar">
+    <button class="btn pri" id="exp">⬇ تصدير</button>
+    <select id="fmt" style="width:auto" title="صيغة الملف">
+      <option value="jpg" selected>JPG (حجم أصغر)</option>
+      <option value="png">PNG (بدون ضغط)</option>
+    </select>
+    <select id="ratio" style="width:auto">
+      <option value="2">جودة عادية ×2</option>
+      <option value="3" selected>جودة طباعة ×3</option>
+      <option value="4">جودة عالية جداً ×4</option>
+    </select>
+    <span class="sp"></span>
+    <button class="btn sm" id="saveProj">💾 حفظ المشروع</button>
+    <button class="btn sm" id="openProj">📂 فتح مشروع</button>
+    <button class="btn sm danger" id="clearCur">🗑 لوحة جديدة</button>
+    <input type="file" id="projFile" accept=".json" hidden>
+    <input type="file" id="hiddenImg" accept="image/*" hidden>
+  </div>
+  <div id="stage"><div id="box"><div id="scaler"><div id="design"></div></div></div></div>
+</main>
+<div id="toast"></div>
+<div id="errbar" hidden></div>
+
+<script src="js/vendor/html-to-image.js"></script>
+<script src="js/logo.js"></script>
+<script src="js/wall.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
