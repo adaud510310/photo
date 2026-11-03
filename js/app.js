@@ -346,7 +346,7 @@ function render(){
         const top = below ? lowLimit + 20 : p.y - 34 - phH;
         h += `<div class="tph ${T.sepia?'old':''} ${e.photo?'':'ph-empty'}" data-entry="${i}" style="left:${left}px;top:${top}px;width:${cw}px;height:${phH}px">${img}</div>`;
       }
-      h += `<div class="tc fit" data-max="${T.fs}" style="left:${left}px;top:${txtTop}px;width:${cw}px;height:${lowLimit-txtTop}px;--fs:${T.fs}px">
+      h += `<div class="tc fit" data-group="tl" data-max="${T.fs}" style="left:${left}px;top:${txtTop}px;width:${cw}px;height:${lowLimit-txtTop}px;--fs:${T.fs}px">
           <div class="yr">${esc(e.year)}</div>
           <div class="ti-ar">${esc(e.t_ar)}</div><div class="ti-en">${esc(e.t_en)}</div><div class="ti-fr">${esc(e.t_fr)}</div>
           <div class="t ar">${esc(e.d_ar)}</div><div class="t">${esc(e.d_en)}</div><div class="t"><i>${esc(e.d_fr)}</i></div>
@@ -358,12 +358,19 @@ function render(){
   autoFit(); fitStage();
 }
 function autoFit(){
+  const groups = {};
   document.querySelectorAll('#design .fit').forEach(f=>{
     const v = f.dataset.var || '--fs';
     let fs = parseFloat(f.dataset.max);
     f.style.setProperty(v, fs+'px');
     while(f.scrollHeight > f.clientHeight+1 && fs > 9){ fs -= .5; f.style.setProperty(v, fs+'px'); }
+    if(f.dataset.group) (groups[f.dataset.group] = groups[f.dataset.group] || []).push({f, v, fs});
   });
+  // نفس حجم الخط لكل عناصر المجموعة = أصغر حجم مناسب
+  for(const g in groups){
+    const min = Math.min(...groups[g].map(x=>x.fs));
+    groups[g].forEach(x=>x.f.style.setProperty(x.v, min+'px'));
+  }
 }
 function fitStage(){
   const [W,H] = SIZES[S.template], st = document.getElementById('stage');

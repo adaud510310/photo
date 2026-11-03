@@ -5,7 +5,7 @@
    يستخدم نفس بيانات الخط الزمني (S.timeline).
    ============================================================ */
 
-const WALL_SIZE = [3200, 2600];
+const WALL_SIZE = [3600, 2800];
 
 /* خلفية ورق قديم (SVG) */
 function wallPaper(W, H){
@@ -44,7 +44,7 @@ function renderWall(){
   const T = S.timeline, [W, H] = WALL_SIZE;
   const ents = T.entries, n = ents.length;
   const x0 = 200, step = n > 1 ? (W - x0 - 680) / (n - 1) : 0;
-  const yU = 1150, yT = 650, yL = 1780, phH = 260, bottom = H - 120;
+  const yU = 1200, yT = 680, yL = 1900, phH = 270, bottom = H - 120;
   const fs = +(T.fs * 1.45).toFixed(1);   // الخط أكبر لأن اللوحة الجدارية كبيرة
   const narrow = step - 78;
   const isUp = i => (i === n - 1) || i % 2 === 0;
@@ -52,22 +52,22 @@ function renderWall(){
   // حساب موضع كل محطة
   const M = ents.map((e, i) => {
     const up = isUp(i), last = i === n - 1 && n > 1;
-    const below = !up || i === 0 || (i < n - 1 && isUp(i + 1));   // صورة تحت النص
+    const below = !up || i === 0;   // صورة تحت النص: المحطات السفلية + الأولى (الرأس فوقها)
     const y = !up ? yL - (i/2) * 14 : (last ? yT : yU - (i/2) * 22);
     return { e, i, up, last, below, x: x0 + i * step, y };
   });
   M.forEach((m, i) => {
     const nx = M[i + 1];
-    if(m.last) m.w = Math.min(W - 110 - (m.x + 24), 620);
+    if(m.last) m.w = Math.min(W - 110 - (m.x + 24), 540);
     else if(m.up) m.w = narrow;
-    else m.w = (nx && nx.up && nx.below) ? narrow : Math.min(step * 1.6, 560);
+    else m.w = Math.min(step * 1.25, 500);
   });
 
   // نهاية الخط "المستقبل مستمر"
   let endX = M.length ? M[M.length - 1].x + 24 : x0;
   M.forEach(m => { if(m.below) endX = Math.max(endX, m.x + 24 + m.w + 50); });
   endX = Math.min(endX, W - 620);
-  const endY = 1960;
+  const endY = 2120;
 
   // المسار المتدرّج
   const lines = [];
@@ -108,7 +108,9 @@ function renderWall(){
         const pw = m.up ? m.w : Math.min(m.w, step * 1.35);
         blocks += `<div class="${cls}" data-entry="${m.i}" style="left:${left}px;top:${bottom - phH}px;width:${pw}px;height:${phH}px">${img}</div>`;
       } else {
-        const pw = m.last ? Math.min(m.w, 460) : Math.min(step * 1.3, 440);
+        const nx = M[m.i + 1];
+        // إذا كانت المحطة التالية علوية أيضاً فالخط الصاعد قريب: الصورة بعرض العمود فقط
+        const pw = m.last ? Math.min(m.w, 480) : (nx && nx.up ? narrow : Math.min(step * 1.3, 460));
         const top = y - 130 - phH;
         blocks += `<div class="${cls}" data-entry="${m.i}" style="left:${x + 16}px;top:${top}px;width:${pw}px;height:${phH}px">${img}</div>`;
         lines.push(`<line x1="${x}" y1="${top}" x2="${x}" y2="${y}" stroke="#7a1c1c" stroke-width="4"/>`);
@@ -120,9 +122,15 @@ function renderWall(){
       lines.push(`<line x1="${x - 28}" y1="${y}" x2="${x - 28}" y2="${dropEnd}" stroke="#7a1c1c" stroke-width="4"/>`);
     }
 
-    blocks += `<div class="wtc fit" data-max="${fs}" style="left:${left}px;top:${textTop}px;width:${m.w}px;height:${textBottom - textTop}px;--fs:${fs}px">
-        <div class="ti-ar">${esc(e.t_ar)}</div><div class="ti-en">${esc(e.t_en)}</div><div class="ti-fr">${esc(e.t_fr)}</div>
-        <div class="t ar">${esc(e.d_ar)}</div><div class="t">${esc(e.d_en)}</div><div class="t"><i>${esc(e.d_fr)}</i></div>
+    // data-group: كل المحطات تأخذ نفس حجم الخط (أصغر حجم يناسب الجميع)
+    blocks += `<div class="wtc fit" data-group="wall" data-max="${fs}" style="left:${left}px;top:${textTop}px;width:${m.w}px;height:${textBottom - textTop}px;--fs:${fs}px">
+        <div class="ti-ar">${esc(e.t_ar)}</div>
+        <div class="ti-en">${esc(e.t_en)}</div>
+        <div class="ti-fr">${esc(e.t_fr)}</div>
+        <div class="sep"></div>
+        <div class="t ar">${esc(e.d_ar)}</div>
+        <div class="t en">${esc(e.d_en)}</div>
+        <div class="t fr">${esc(e.d_fr)}</div>
       </div>`;
   });
 
