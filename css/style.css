@@ -84,13 +84,13 @@ input[type=range]{width:100%;accent-color:var(--m)}
 .timeline .tc .yr{font-family:'Playfair Display',serif;font-size:76px;font-weight:800;line-height:.95;color:#7a1c1c}
 .timeline .tc .ti-ar{font-size:calc(var(--fs)*1.55);font-weight:800;direction:rtl;line-height:1.25;margin-top:6px}
 .timeline .tc .ti-en{font-size:calc(var(--fs)*.95);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;line-height:1.25;color:#5b2a20}
-.timeline .tc .ti-es{font-size:calc(var(--fs)*.9);font-weight:500;font-style:italic;line-height:1.25;color:#5b2a20}
+.timeline .tc .ti-fr{font-size:calc(var(--fs)*.9);font-weight:500;font-style:italic;line-height:1.25;color:#5b2a20}
 .timeline .tc .t{color:#4a3426;font-weight:500;font-size:var(--fs);line-height:1.4;margin-top:6px}
 .timeline .tc .t.ar{direction:rtl;text-align:left;font-weight:700;color:#6b2420;font-size:calc(var(--fs)*1.1)}
 .timeline .end{position:absolute;text-align:left}
 .timeline .end .e-ar{font-size:48px;font-weight:800;direction:rtl;line-height:1.2}
 .timeline .end .e-en{font-size:22px;letter-spacing:3px;text-transform:uppercase;font-weight:500;margin-top:10px;color:#5b2a20}
-.timeline .end .e-es{font-size:20px;font-style:italic;color:#5b2a20;margin-top:4px}
+.timeline .end .e-fr{font-size:20px;font-style:italic;color:#5b2a20;margin-top:4px}
 #errbar{position:fixed;top:0;left:0;right:0;background:#b3261e;color:#fff;padding:10px 16px;font:700 14px Tajawal,sans-serif;z-index:10;text-align:center}
 
 /* ===== التصميم الجداري (wall) ===== */
@@ -104,12 +104,12 @@ input[type=range]{width:100%;accent-color:var(--m)}
 .wall .whd .n-en{font-size:36px;letter-spacing:9px;font-weight:500;margin-top:8px}
 .wall .whd .sl-ar{font-size:44px;font-weight:700;direction:rtl;margin-top:34px;color:#5b2a20}
 .wall .whd .sl{font-size:25px;letter-spacing:3px;text-transform:uppercase;font-weight:500;color:#5b2a20;margin-top:6px}
-.wall .whd .sl.es{text-transform:none;font-style:italic;letter-spacing:1px}
+.wall .whd .sl.fr{text-transform:none;font-style:italic;letter-spacing:1px}
 .wall .wyr{position:absolute;font-family:'Playfair Display',serif;font-size:100px;font-weight:800;line-height:1;color:#7a1c1c;white-space:nowrap}
 .wall .wtc{position:absolute;display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:4px;overflow:hidden}
 .wall .wtc .ti-ar{font-size:calc(var(--fs)*1.7);font-weight:800;direction:rtl;line-height:1.25}
 .wall .wtc .ti-en{font-size:calc(var(--fs)*1.05);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;line-height:1.25;color:#5b2a20}
-.wall .wtc .ti-es{font-size:var(--fs);font-weight:500;font-style:italic;line-height:1.25;color:#5b2a20}
+.wall .wtc .ti-fr{font-size:var(--fs);font-weight:500;font-style:italic;line-height:1.25;color:#5b2a20}
 .wall .wtc .t{color:#4a3426;font-weight:500;font-size:var(--fs);line-height:1.4;margin-top:8px}
 .wall .wtc .t.ar{direction:rtl;text-align:left;font-weight:700;color:#6b2420;font-size:calc(var(--fs)*1.12)}
 .wall .wph{position:absolute;border:8px solid #f6efe2;box-shadow:0 6px 18px rgba(60,30,10,.35);background:#cdbb9c;overflow:hidden}
@@ -119,7 +119,7 @@ input[type=range]{width:100%;accent-color:var(--m)}
 .wall .wend .e-ar{font-size:72px;font-weight:800;direction:rtl;line-height:1.2;text-align:left}
 .wall .wend .e-en{font-size:30px;letter-spacing:4px;text-transform:uppercase;font-weight:500;margin-top:16px;color:#5b2a20;display:flex;align-items:center;gap:18px}
 .wall .wend .e-en span{display:inline-block;width:110px;height:4px;background:#7a1c1c}
-.wall .wend .e-es{font-size:26px;font-style:italic;color:#5b2a20;margin-top:6px;padding-left:128px}
+.wall .wend .e-fr{font-size:26px;font-style:italic;color:#5b2a20;margin-top:6px;padding-left:128px}
 
 /* ===== إطارات الصور الفارغة (للمعاينة فقط — لا تظهر عند التصدير) ===== */
 .d .ph-empty{cursor:pointer;background:rgba(122,28,28,.06)!important;border:5px dashed rgba(122,28,28,.55)!important;box-shadow:none!important}

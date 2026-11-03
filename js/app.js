@@ -17,41 +17,41 @@ const DEFAULTS = () => ({
     photo: null, fit: 'cover', px: 50, py: 50, zoom: 100, fs: 16.5, sfs: 30,
     side_ar: "رحلة النادي\nإلى الكويت والعراق\n1395 هـ",
     side_en: "Club trip\nto Kuwait and Iraq\n1395 AH",
-    side_es: "Viaje del club\na Kuwait e Irak\n1395 H",
+    side_fr: "Voyage du club\nau Koweït et en Irak\n1395 H",
     ar: "صورة من رحلة النادي إلى دولتي الكويت والعراق لإقامة مباريات دولية ودية في سنة 1395 هـ ويظهر في الصورة :\nرئيس النادي الأستاذ/ محمد بن خريف الناشي (رحمه الله)\nوالأستاذ/ عبدالله بن ناصر العميم ،\nوالأستاذ/ عبدالمحسن بن حمد العميم (رحمه الله) ، والأستاذ/ حسن بن حمد بن حسن ، والأستاذ/ أحمد بن خريف الناشي",
     en: "Photo from the club's trip to Kuwait and Iraq to play international friendly matches in 1395 AH. The photo features:\n• Club President, Mr. Mohammed bin Kharif Al-Nashi (may Allah have mercy on him)\n• Mr. Abdullah bin Nasser Al-Omaim\n• Mr. Abdulmohsen bin Hamad Al-Omaim (may Allah have mercy on him)\n• Mr. Hassan bin Hamad bin Hassan\n• Mr. Ahmed bin Kharif Al-Nashi",
-    es: "Foto del viaje del club a Kuwait e Irak para disputar partidos amistosos internacionales en 1395 H. Aparecen en la foto:\n• El presidente del club, Sr. Mohammed bin Kharif Al-Nashi (que Dios tenga misericordia de él)\n• Sr. Abdullah bin Nasser Al-Omaim\n• Sr. Abdulmohsen bin Hamad Al-Omaim (que Dios tenga misericordia de él)\n• Sr. Hassan bin Hamad bin Hassan\n• Sr. Ahmed bin Kharif Al-Nashi"
+    fr: "Photo du voyage du club au Koweït et en Irak pour disputer des matches amicaux internationaux en 1395 H. Sont présents sur la photo :\n• Le président du club, M. Mohammed bin Kharif Al-Nashi (que Dieu lui fasse miséricorde)\n• M. Abdullah bin Nasser Al-Omaim\n• M. Abdulmohsen bin Hamad Al-Omaim (que Dieu lui fasse miséricorde)\n• M. Hassan bin Hamad bin Hassan\n• M. Ahmed bin Kharif Al-Nashi"
   },
   landscape: {
     photo: null, fit: 'cover', px: 50, py: 50, zoom: 100, fs: 23, gray: false,
     ar: "صورة من زيارة صاحب السمو الملكي الأمير / فيصل بن فهد بن عبدالعزيز (رحمه الله) الرئيس العام لرعاية الشباب لمقر النادي الفيصلي بحرمة في حفل أقيم بهذه المناسبة سنة 1396 هـ\nويظهر في الصورة الأستاذ / عبدالله بن ناصر العميم وهدية النادي الى سموه",
     en: "Photo from the visit of His Royal Highness Prince Faisal bin Fahd bin Abdulaziz (may Allah have mercy on him), General President of Youth Welfare, to the headquarters of Al-Faisaly Club in Harmah, during a ceremony held on this occasion in 1396 AH. The photo shows Mr. Abdullah bin Nasser Al-Omaim and the commemorative gift presented by the club to His Highness.",
-    es: "Foto de la visita de Su Alteza Real el Príncipe Faisal bin Fahd bin Abdulaziz (que Dios tenga misericordia de él), Presidente General del Bienestar Juvenil, a la sede del Club Al-Faisaly en Harmah, durante una ceremonia celebrada con esta ocasión en 1396 H. La foto muestra también al Sr. Abdullah bin Nasser Al-Omaim y el regalo conmemorativo ofrecido por el club a Su Alteza."
+    fr: "Photo de la visite de Son Altesse Royale le Prince Faisal bin Fahd bin Abdulaziz (que Dieu lui fasse miséricorde), Président général du Bien-être de la Jeunesse, au siège du club Al-Faisaly à Harmah, lors d’une cérémonie organisée à cette occasion en 1396 H. La photo montre également M. Abdullah bin Nasser Al-Omaim ainsi que le cadeau commémoratif offert par le club à Son Altesse."
   },
   sidepanel: {
     photo: null, fit: 'cover', px: 50, py: 50, zoom: 100, fs: 27, gray: false,
     ar: "صورة من زيارة صاحب السمو الملكي الأمير / فيصل بن فهد بن عبدالعزيز (رحمه الله) الرئيس العام لرعاية الشباب لمقر النادي الفيصلي بحرمة في حفل أقيم بهذه المناسبة سنة 1396 هـ\nويظهر في الصورة الأستاذ / عبدالله بن ناصر العميم وهدية النادي الى سموه",
     en: "Photo from the visit of His Royal Highness Prince Faisal bin Fahd bin Abdulaziz (may Allah have mercy on him), General President of Youth Welfare, to the headquarters of Al-Faisaly Club in Harmah, during a ceremony held on this occasion in 1396 AH. The photo shows Mr. Abdullah bin Nasser Al-Omaim and the commemorative gift presented by the club to His Highness.",
-    es: "Foto de la visita de Su Alteza Real el Príncipe Faisal bin Fahd bin Abdulaziz (que Dios tenga misericordia de él), Presidente General del Bienestar Juvenil, a la sede del Club Al-Faisaly en Harmah, durante una ceremonia celebrada con esta ocasión en 1396 H. La foto muestra también al Sr. Abdullah bin Nasser Al-Omaim y el regalo conmemorativo ofrecido por el club a Su Alteza."
+    fr: "Photo de la visite de Son Altesse Royale le Prince Faisal bin Fahd bin Abdulaziz (que Dieu lui fasse miséricorde), Président général du Bien-être de la Jeunesse, au siège du club Al-Faisaly à Harmah, lors d’une cérémonie organisée à cette occasion en 1396 H. La photo montre également M. Abdullah bin Nasser Al-Omaim ainsi que le cadeau commémoratif offert par le club à Son Altesse."
   },
   timeline: {
     fs: 18, bg: 'old', sepia: true,
-    end_ar: "المستقبل .. مستمر", end_en: "The journey continues", end_es: "El camino continúa",
+    end_ar: "المستقبل .. مستمر", end_en: "The journey continues", end_fr: "Le parcours continue",
     name_ar: "النادي الفيصلي السعودي", name_en: "AL FAISALY SAUDI CLUB",
-    sl_ar: "أكثر من ناد .. هوية وانتماء", sl_en: "More than a club .. a belonging", sl_es: "Más que un club .. una pertenencia",
+    sl_ar: "أكثر من ناد .. هوية وانتماء", sl_en: "More than a club .. a belonging", sl_fr: "Plus qu’un club .. une appartenance",
     entries: [
-      E("1954","التأسيس","Founding","Fundación","تأسس النادي الفيصلي في مدينة حرمة ليكون مصدر فخر لأهله وجماهيره","Al Faisaly was founded in Harmah, becoming a source of pride for its people and supporters.","Al Faisaly fue fundado en Harmah, convirtiéndose en motivo de orgullo para su gente y su afición."),
-      E("1960","البدايات الأولى","Early Years","Primeros años","بناء القاعدة الجماهيرية وتشكيل ملامح النادي","Building the foundation on passion and identity.","Construyendo los cimientos con pasión e identidad."),
-      E("1970","بدايات التميز","Early Achievements","Primeros logros","خطوات ثابتة نحو تحقيق أولى الإنجازات","Steady steps towards the first achievements.","Pasos firmes hacia los primeros logros."),
-      E("1980","تطور النادي","Club Development","Desarrollo del club","مراحل من البناء والتنظيم وتعزيز الحضور الرياضي","Years of structure, organization and a stronger sporting presence.","Años de estructura, organización y mayor presencia deportiva."),
-      E("1990","حضور أقوى","A Stronger Presence","Una presencia más fuerte","جماهير أوفى وحضور أكبر في مختلف المسابقات","A more devoted fan base and a stronger presence in all competitions.","Una afición más fiel y una mayor presencia en todas las competiciones."),
-      E("2000","إنجازات وبطولات","Achievements","Logros y títulos","تحقيق البطولات وترسيخ مكانة النادي بين الكبار","Winning titles and establishing the club among the leading teams.","Conquista de títulos y consolidación del club entre los grandes."),
-      E("2010","نحو المستقبل","Towards the Future","Hacia el futuro","مواصلة المسيرة وتطوير البنية التحتية والكوادر","Continuing the journey and developing the infrastructure and talents.","Continuando el camino y desarrollando la infraestructura y el talento."),
-      E("2020","مسيرة مستمرة","A Continuing Journey","Un camino que continúa","الفيصلي حاضر دائماً بجماهيره وتاريخه وطموحه","Al Faisaly remains present with its fans, history and ambition.","Al Faisaly sigue presente con su afición, su historia y su ambición.")
+      E("1954","التأسيس","Founding","Fondation","تأسس النادي الفيصلي في مدينة حرمة ليكون مصدر فخر لأهله وجماهيره","Al Faisaly was founded in Harmah, becoming a source of pride for its people and supporters.","Al Faisaly a été fondé à Harmah, devenant une source de fierté pour les siens et pour ses supporters."),
+      E("1960","البدايات الأولى","Early Years","Les premières années","بناء القاعدة الجماهيرية وتشكيل ملامح النادي","Building the foundation on passion and identity.","Bâtir les fondations avec passion et identité."),
+      E("1970","بدايات التميز","Early Achievements","Premières réussites","خطوات ثابتة نحو تحقيق أولى الإنجازات","Steady steps towards the first achievements.","Des pas assurés vers les premières réussites."),
+      E("1980","تطور النادي","Club Development","Développement du club","مراحل من البناء والتنظيم وتعزيز الحضور الرياضي","Years of structure, organization and a stronger sporting presence.","Des années de structuration, d’organisation et d’une présence sportive renforcée."),
+      E("1990","حضور أقوى","A Stronger Presence","Une présence renforcée","جماهير أوفى وحضور أكبر في مختلف المسابقات","A more devoted fan base and a stronger presence in all competitions.","Des supporters plus fidèles et une présence plus forte dans toutes les compétitions."),
+      E("2000","إنجازات وبطولات","Achievements","Titres et réussites","تحقيق البطولات وترسيخ مكانة النادي بين الكبار","Winning titles and establishing the club among the leading teams.","Des titres remportés et un club affirmé parmi les meilleures équipes."),
+      E("2010","نحو المستقبل","Towards the Future","Vers l’avenir","مواصلة المسيرة وتطوير البنية التحتية والكوادر","Continuing the journey and developing the infrastructure and talents.","Poursuivre le parcours et développer les infrastructures et les talents."),
+      E("2020","مسيرة مستمرة","A Continuing Journey","Un parcours qui continue","الفيصلي حاضر دائماً بجماهيره وتاريخه وطموحه","Al Faisaly remains present with its fans, history and ambition.","Al Faisaly reste présent avec ses supporters, son histoire et son ambition.")
     ]
   }
 });
-function E(year, tar, ten, tes, dar, den, des){ return {year, t_ar:tar, t_en:ten, t_es:tes, d_ar:dar, d_en:den, d_es:des, photo:null, px:50, py:50}; }
+function E(year, tar, ten, tfr, dar, den, dfr){ return {year, t_ar:tar, t_en:ten, t_fr:tfr, d_ar:dar, d_en:den, d_fr:dfr, photo:null, px:50, py:50}; }
 
 const KEY = 'faisaly-museum-panels-v1';
 let S = load() || DEFAULTS();
@@ -155,24 +155,24 @@ function photoBlock(t){
 function textBlock(t){
   const side = t!=='portrait' ? '' : `<fieldset><legend>العمود الجانبي (بجانب الصورة)</legend>
     ${ta(t+'.side_ar','النص العربي','rtl',4)}
-    <button class="btn pri" style="width:100%;margin-top:8px" data-trside>🌐 ترجم إلى الإنجليزية والإسبانية</button>
+    <button class="btn pri" style="width:100%;margin-top:8px" data-trside>🌐 ترجم إلى الإنجليزية والفرنسية</button>
     ${ta(t+'.side_en','English','ltr',4)}
-    ${ta(t+'.side_es','Español','ltr',4)}
+    ${ta(t+'.side_fr','Français','ltr',4)}
     ${rg(t+'.sfs','حجم خط العمود',14,60,.5)}
     <div class="hint">مناسب للعنوان أو التاريخ أو المناسبة. يصغر الخط تلقائياً إذا طال النص.</div>
   </fieldset>`;
   return side + `<fieldset><legend>${t==='portrait'?'نصوص الصندوق السفلي':'النصوص'}</legend>
     ${ta(t+'.ar','النص العربي','rtl',6)}
-    <button class="btn pri" style="width:100%;margin-top:8px" data-tr="${t}">🌐 ترجم إلى الإنجليزية والإسبانية</button>
+    <button class="btn pri" style="width:100%;margin-top:8px" data-tr="${t}">🌐 ترجم إلى الإنجليزية والفرنسية</button>
     ${ta(t+'.en','English','ltr',6)}
-    ${ta(t+'.es','Español','ltr',6)}
+    ${ta(t+'.fr','Français','ltr',6)}
     ${rg(t+'.fs','حجم الخط',12,40,.5)}
     <div class="hint">الترجمة آلية — يمكنك تعديلها مباشرة.</div>
   </fieldset>`;
 }
 function buildSide(){
   const t = S.template;
-  let h = `<h1>صانع لوحات المتحف</h1><div class="sub">النادي الفيصلي السعودي — صورة + نص عربي + ترجمة إنجليزي وإسباني</div>
+  let h = `<h1>صانع لوحات المتحف</h1><div class="sub">النادي الفيصلي السعودي — صورة + نص عربي + ترجمة إنجليزي وفرنسي</div>
   <div class="tabs">
     <button data-tpl="portrait" class="${t==='portrait'?'on':''}">▯ طولي</button>
     <button data-tpl="landscape" class="${t==='landscape'?'on':''}">▭ عرضي</button>
@@ -187,7 +187,7 @@ function buildSide(){
       ${tx('timeline.name_ar','اسم النادي')}${tx('timeline.name_en','Club name (EN)','ltr')}
       ${tx('timeline.sl_ar','الشعار')}
       <button class="btn sm" style="margin-top:8px" data-trhead>🌐 ترجم الشعار</button>
-      ${tx('timeline.sl_en','Slogan (EN)','ltr')}${tx('timeline.sl_es','Lema (ES)','ltr')}
+      ${tx('timeline.sl_en','Slogan (EN)','ltr')}${tx('timeline.sl_fr','Devise (FR)','ltr')}
       ${rg('timeline.fs','حجم الخط',12,28,.5)}
     </fieldset>
     <fieldset><legend>الشكل والنهاية</legend>
@@ -196,7 +196,7 @@ function buildSide(){
       <label><input type="checkbox" data-b="timeline.sepia" data-chk ${T.sepia?'checked':''}> صور بلون قديم (سيبيا)</label>
       ${tx('timeline.end_ar','عبارة النهاية')}
       <button class="btn sm" style="margin-top:8px" data-trend>🌐 ترجم العبارة</button>
-      ${tx('timeline.end_en','End (EN)','ltr')}${tx('timeline.end_es','Final (ES)','ltr')}
+      ${tx('timeline.end_en','End (EN)','ltr')}${tx('timeline.end_fr','Fin (FR)','ltr')}
     </fieldset>
     <fieldset><legend>المحطات (${T.entries.length})</legend>
     <button class="btn pri" style="width:100%;margin-bottom:10px" data-trall>🌐 ترجم جميع المحطات</button>`;
@@ -212,7 +212,7 @@ function buildSide(){
         <div class="row" style="margin-top:8px"><button class="btn sm pri" data-pick="${b}.photo">📷 صورة</button>${e.photo?`<button class="btn sm danger" data-clear="${b}.photo">إزالة الصورة</button>`:''}<button class="btn sm" data-tre="${i}">🌐 ترجم</button></div>
         ${e.photo?`<img class="thumb" src="${e.photo}">`:''}
         ${tx(b+'.t_en','Title (EN)','ltr')}${ta(b+'.d_en','Description (EN)','ltr',2)}
-        ${tx(b+'.t_es','Título (ES)','ltr')}${ta(b+'.d_es','Descripción (ES)','ltr',2)}
+        ${tx(b+'.t_fr','Titre (FR)','ltr')}${ta(b+'.d_fr','Description (FR)','ltr',2)}
       </div>`;
     });
     h += `<button class="btn" style="width:100%" data-add>＋ إضافة محطة</button>
@@ -244,13 +244,13 @@ function render(){
         <div class="card side fit" data-var="--sfs" data-max="${P.sfs}" style="--sfs:${P.sfs}px">
           <div class="t ar">${esc(P.side_ar)}</div>
           <div class="hr"></div><div class="t">${esc(P.side_en)}</div>
-          <div class="hr"></div><div class="t"><i>${esc(P.side_es)}</i></div>
+          <div class="hr"></div><div class="t"><i>${esc(P.side_fr)}</i></div>
         </div>
         ${photoHTML(P,'card')}
       </div>
       <div class="card cap">
         <div style="display:flex;justify-content:center"><img class="logo" src="${logoSrc()}"></div>
-        <div class="col"><div class="t">${esc(P.es)}</div></div>
+        <div class="col"><div class="t">${esc(P.fr)}</div></div>
         <div class="col"><div class="t">${esc(P.en)}</div></div>
         <div class="col ar"><div class="t ar">${esc(P.ar)}</div></div>
       </div></div>`;
@@ -260,20 +260,20 @@ function render(){
       ${photoHTML(P,'card')}
       <div class="card cap">
         <div style="display:flex;justify-content:center"><img class="logo" src="${logoSrc()}"></div>
-        <div class="col"><div class="t">${esc(P.es)}</div></div>
+        <div class="col"><div class="t">${esc(P.fr)}</div></div>
         <div class="col"><div class="t">${esc(P.en)}</div></div>
         <div class="col ar"><div class="t ar">${esc(P.ar)}</div></div>
       </div>
     </div>`;
   } else if(t==='sidepanel'){
-    // مثل العينة: عمود جانبي (شعار + عربي + إنجليزي + إسباني) والصورة على اليمين
+    // مثل العينة: عمود جانبي (شعار + عربي + إنجليزي + فرنسي) والصورة على اليمين
     const P = S.sidepanel;
     h = `<div class="d sidepanel">
       <div class="card side fit" style="--fs:${P.fs}px" data-max="${P.fs}">
         <img class="logo" src="${logoSrc()}">
         <div class="hr"></div><div class="t ar">${esc(P.ar)}</div>
         <div class="hr"></div><div class="t">${esc(P.en)}</div>
-        <div class="hr"></div><div class="t">${esc(P.es)}</div>
+        <div class="hr"></div><div class="t">${esc(P.fr)}</div>
       </div>
       ${photoHTML(P,'card')}
     </div>`;
@@ -324,7 +324,7 @@ function render(){
       ${paper}
       <div class="hd"><img class="logo" src="${logoSrc()}">
         <div class="n-ar">${esc(T.name_ar)}</div><div class="n-en">${esc(T.name_en)}</div>
-        <div class="sl-ar">${esc(T.sl_ar)}</div><div class="sl">${esc(T.sl_en)}</div><div class="sl" style="text-transform:none;font-style:italic">${esc(T.sl_es)}</div>
+        <div class="sl-ar">${esc(T.sl_ar)}</div><div class="sl">${esc(T.sl_en)}</div><div class="sl" style="text-transform:none;font-style:italic">${esc(T.sl_fr)}</div>
       </div>
       <svg class="path" width="${W}" height="${H}">
         <path d="${d}" fill="none" stroke="#7a1c1c" stroke-width="6" stroke-linecap="round"/>
@@ -333,7 +333,7 @@ function render(){
         <path d="M${xe+222},${ye-18} L${xe+256},${ye} L${xe+222},${ye+18} Z" fill="#7a1c1c"/>
       </svg>
       <div class="end" style="left:${xe}px;top:${ye+40}px;width:${W-xe-80}px">
-        <div class="e-ar">${esc(T.end_ar)}</div><div class="e-en">${esc(T.end_en)}</div><div class="e-es">${esc(T.end_es)}</div>
+        <div class="e-ar">${esc(T.end_ar)}</div><div class="e-en">${esc(T.end_en)}</div><div class="e-fr">${esc(T.end_fr)}</div>
         <div style="width:120px;height:4px;background:#7a1c1c;margin-top:16px"></div>
       </div>`;
     T.entries.forEach((e,i)=>{
@@ -348,8 +348,8 @@ function render(){
       }
       h += `<div class="tc fit" data-max="${T.fs}" style="left:${left}px;top:${txtTop}px;width:${cw}px;height:${lowLimit-txtTop}px;--fs:${T.fs}px">
           <div class="yr">${esc(e.year)}</div>
-          <div class="ti-ar">${esc(e.t_ar)}</div><div class="ti-en">${esc(e.t_en)}</div><div class="ti-es">${esc(e.t_es)}</div>
-          <div class="t ar">${esc(e.d_ar)}</div><div class="t">${esc(e.d_en)}</div><div class="t"><i>${esc(e.d_es)}</i></div>
+          <div class="ti-ar">${esc(e.t_ar)}</div><div class="ti-en">${esc(e.t_en)}</div><div class="ti-fr">${esc(e.t_fr)}</div>
+          <div class="t ar">${esc(e.d_ar)}</div><div class="t">${esc(e.d_en)}</div><div class="t"><i>${esc(e.d_fr)}</i></div>
         </div>`;
     });
     h += `</div>`;
@@ -403,13 +403,13 @@ side.addEventListener('click', e=>{
   if(d.tpl){ S.template = d.tpl; buildSide(); render(); save(); }
   else if(d.pick){ pick(d.pick); }
   else if(d.clear){ setP(S, d.clear, null); buildSide(); render(); save(); }
-  else if(d.tr){ const t = d.tr; doTranslate(b, [[t+'.ar', t+'.en','en'],[t+'.ar', t+'.es','es']]); }
-  else if(d.tre !== undefined){ const p = 'timeline.entries.'+d.tre; doTranslate(b, ['t','d'].flatMap(k=>[[`${p}.${k}_ar`,`${p}.${k}_en`,'en'],[`${p}.${k}_ar`,`${p}.${k}_es`,'es']])); }
-  else if(d.trall !== undefined){ const pairs = []; S.timeline.entries.forEach((_,i)=>{ const p='timeline.entries.'+i; ['t','d'].forEach(k=>{ pairs.push([`${p}.${k}_ar`,`${p}.${k}_en`,'en'],[`${p}.${k}_ar`,`${p}.${k}_es`,'es']); }); }); doTranslate(b, pairs); }
-  else if(d.trside !== undefined){ doTranslate(b, [['portrait.side_ar','portrait.side_en','en'],['portrait.side_ar','portrait.side_es','es']]); }
-  else if(d.trend !== undefined){ doTranslate(b, [['timeline.end_ar','timeline.end_en','en'],['timeline.end_ar','timeline.end_es','es']]); }
+  else if(d.tr){ const t = d.tr; doTranslate(b, [[t+'.ar', t+'.en','en'],[t+'.ar', t+'.fr','fr']]); }
+  else if(d.tre !== undefined){ const p = 'timeline.entries.'+d.tre; doTranslate(b, ['t','d'].flatMap(k=>[[`${p}.${k}_ar`,`${p}.${k}_en`,'en'],[`${p}.${k}_ar`,`${p}.${k}_fr`,'fr']])); }
+  else if(d.trall !== undefined){ const pairs = []; S.timeline.entries.forEach((_,i)=>{ const p='timeline.entries.'+i; ['t','d'].forEach(k=>{ pairs.push([`${p}.${k}_ar`,`${p}.${k}_en`,'en'],[`${p}.${k}_ar`,`${p}.${k}_fr`,'fr']); }); }); doTranslate(b, pairs); }
+  else if(d.trside !== undefined){ doTranslate(b, [['portrait.side_ar','portrait.side_en','en'],['portrait.side_ar','portrait.side_fr','fr']]); }
+  else if(d.trend !== undefined){ doTranslate(b, [['timeline.end_ar','timeline.end_en','en'],['timeline.end_ar','timeline.end_fr','fr']]); }
   else if(d.resettl !== undefined){ if(confirm('استبدال المحطات الحالية بالمحطات الافتراضية؟')){ S.timeline.entries = DEFAULTS().timeline.entries; buildSide(); render(); save(); } }
-  else if(d.trhead !== undefined){ doTranslate(b, [['timeline.sl_ar','timeline.sl_en','en'],['timeline.sl_ar','timeline.sl_es','es']]); }
+  else if(d.trhead !== undefined){ doTranslate(b, [['timeline.sl_ar','timeline.sl_en','en'],['timeline.sl_ar','timeline.sl_fr','fr']]); }
   else if(d.add !== undefined){ S.timeline.entries.push(E('','','','','','','')); buildSide(); render(); save(); side.scrollTop = side.scrollHeight; }
   else if(d.del !== undefined){ if(confirm('حذف هذه المحطة؟')){ S.timeline.entries.splice(+d.del,1); buildSide(); render(); save(); } }
   else if(d.mv !== undefined){ const a = S.timeline.entries, i = +d.mv, j = i + +d.d; [a[i],a[j]] = [a[j],a[i]]; buildSide(); render(); save(); }
@@ -477,7 +477,7 @@ document.getElementById('clearCur').onclick = ()=>{
   if(!confirm('تفريغ اللوحة الحالية (الصورة والنصوص)؟')) return;
   const t = S.template;
   if(isTL(t)){ S.timeline.entries = [E('','','','','','','')]; }
-  else Object.assign(S[t], {photo:null, ar:'', en:'', es:'', px:50, py:50, zoom:100});
+  else Object.assign(S[t], {photo:null, ar:'', en:'', fr:'', px:50, py:50, zoom:100});
   buildSide(); render(); save();
 };
 

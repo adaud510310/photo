@@ -121,8 +121,8 @@ function renderWall(){
     }
 
     blocks += `<div class="wtc fit" data-max="${fs}" style="left:${left}px;top:${textTop}px;width:${m.w}px;height:${textBottom - textTop}px;--fs:${fs}px">
-        <div class="ti-ar">${esc(e.t_ar)}</div><div class="ti-en">${esc(e.t_en)}</div><div class="ti-es">${esc(e.t_es)}</div>
-        <div class="t ar">${esc(e.d_ar)}</div><div class="t">${esc(e.d_en)}</div><div class="t"><i>${esc(e.d_es)}</i></div>
+        <div class="ti-ar">${esc(e.t_ar)}</div><div class="ti-en">${esc(e.t_en)}</div><div class="ti-fr">${esc(e.t_fr)}</div>
+        <div class="t ar">${esc(e.d_ar)}</div><div class="t">${esc(e.d_en)}</div><div class="t"><i>${esc(e.d_fr)}</i></div>
       </div>`;
   });
 
@@ -135,14 +135,14 @@ function renderWall(){
     ${T.bg==='plain' ? '' : wallPaper(W, H)}
     <div class="whd"><img class="logo" src="${logoSrc()}">
       <div class="n-ar">${esc(T.name_ar)}</div><div class="n-en">${esc(T.name_en)}</div>
-      <div class="sl-ar">${esc(T.sl_ar)}</div><div class="sl">${esc(T.sl_en)}</div><div class="sl es">${esc(T.sl_es)}</div>
+      <div class="sl-ar">${esc(T.sl_ar)}</div><div class="sl">${esc(T.sl_en)}</div><div class="sl fr">${esc(T.sl_fr)}</div>
     </div>
     <svg class="path" width="${W}" height="${H}">${lines.join('')}</svg>
     ${blocks}
     <div class="wend" style="left:${ex + 150}px;top:${ey + 50}px;width:${W - ex - 260}px">
       <div class="e-ar">${esc(T.end_ar)}</div>
       <div class="e-en"><span></span>${esc(T.end_en)}</div>
-      <div class="e-es">${esc(T.end_es)}</div>
+      <div class="e-fr">${esc(T.end_fr)}</div>
     </div>
   </div>`;
 }
