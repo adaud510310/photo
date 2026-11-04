@@ -42,12 +42,12 @@ const DEFAULTS = () => ({
     entries: [
       E("1954","التأسيس","Founding","Fondation","تأسس النادي الفيصلي في مدينة حرمة ليكون مصدر فخر لأهله وجماهيره","Al Faisaly was founded in Harmah, becoming a source of pride for its people and supporters.","Al Faisaly a été fondé à Harmah, devenant une source de fierté pour les siens et pour ses supporters."),
       E("1960","البدايات الأولى","Early Years","Les premières années","بناء القاعدة الجماهيرية وتشكيل ملامح النادي","Building the foundation on passion and identity.","Bâtir les fondations avec passion et identité."),
-      E("1970","بدايات التميز","Early Achievements","Premières réussites","خطوات ثابتة نحو تحقيق أولى الإنجازات","Steady steps towards the first achievements.","Des pas assurés vers les premières réussites."),
+      E("1970","بدايات التميز","Early Achievements","Premières réussites","خطوات ثابتة نحو تحقيق أولى الإنجازات","A step towards distinction.","Des pas assurés vers les premières réussites."),
       E("1980","تطور النادي","Club Development","Développement du club","مراحل من البناء والتنظيم وتعزيز الحضور الرياضي","Years of structure, organization and a stronger sporting presence.","Des années de structuration, d’organisation et d’une présence sportive renforcée."),
-      E("1990","حضور أقوى","A Stronger Presence","Une présence renforcée","جماهير أوفى وحضور أكبر في مختلف المسابقات","A more devoted fan base and a stronger presence in all competitions.","Des supporters plus fidèles et une présence plus forte dans toutes les compétitions."),
-      E("2000","إنجازات وبطولات","Achievements","Titres et réussites","تحقيق البطولات وترسيخ مكانة النادي بين الكبار","Winning titles and establishing the club among the leading teams.","Des titres remportés et un club affirmé parmi les meilleures équipes."),
+      E("1990","حضور أقوى","A Stronger Presence","Une présence renforcée","جماهير أوفى ..\nوحضور أكبر\nفي مختلف المسابقات","A more devoted fan base and a stronger presence in all competitions.","Des supporters plus fidèles et une présence plus forte dans toutes les compétitions."),
+      E("2000","إنجازات وبطولات","Achievements","Titres et réussites","تحقيق البطولات وترسيخ مكانة النادي بين الكبار","Winning titles and establishing the club's status among the leading teams.","Des titres remportés et un club affirmé parmi les meilleures équipes."),
       E("2010","نحو المستقبل","Towards the Future","Vers l’avenir","مواصلة المسيرة وتطوير البنية التحتية والكوادر","Continuing the journey and developing the infrastructure and talents.","Poursuivre le parcours et développer les infrastructures et les talents."),
-      E("2020","مسيرة مستمرة","A Continuing Journey","Un parcours qui continue","الفيصلي حاضر دائماً بجماهيره وتاريخه وطموحه","Al Faisaly remains present with its fans, history and ambition.","Al Faisaly reste présent avec ses supporters, son histoire et son ambition.")
+      E("2020","مسيرة مستمرة","A Continuing Journey","Un parcours qui continue","الفيصلي حاضر دائماً ..\nبجماهيره وتاريخه\nوطموحه","Al Faisaly remains present with its fans, history and ambition.","Al Faisaly reste présent avec ses supporters, son histoire et son ambition.")
     ]
   }
 });
@@ -55,7 +55,11 @@ function E(year, tar, ten, tfr, dar, den, dfr){ return {year, t_ar:tar, t_en:ten
 
 const KEY = 'faisaly-museum-panels-v1';
 let S = load() || DEFAULTS();
-(function fillMissing(){ const D = DEFAULTS(); for(const t of ['portrait','landscape','sidepanel','timeline']){ if(!S[t]) S[t] = D[t]; for(const k in D[t]) if(!(k in S[t])) S[t][k] = D[t][k]; } })();
+(function fillMissing(){ const D = DEFAULTS(); for(const t of ['portrait','landscape','sidepanel','timeline']){ if(!S[t]) S[t] = D[t]; for(const k in D[t]) if(!(k in S[t])) S[t][k] = D[t][k]; }
+  // تحديث صياغة المرجع للمشاريع المحفوظة — فقط إذا كان النص ما زال الافتراضي القديم
+  const OLD = {"Steady steps towards the first achievements.":"A step towards distinction.","جماهير أوفى وحضور أكبر في مختلف المسابقات":"جماهير أوفى ..\nوحضور أكبر\nفي مختلف المسابقات","Winning titles and establishing the club among the leading teams.":"Winning titles and establishing the club's status among the leading teams.","الفيصلي حاضر دائماً بجماهيره وتاريخه وطموحه":"الفيصلي حاضر دائماً ..\nبجماهيره وتاريخه\nوطموحه"};
+  S.timeline.entries.forEach(e => { for(const k of ['d_ar','d_en']) if(OLD[e[k]]) e[k] = OLD[e[k]]; });
+})();
 
 function load(){
   try{
@@ -76,6 +80,8 @@ function save(){
 }
 
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+// بدون أسطر فارغة في الأطراف، ولا تنفصل السنة عن علامتها (1396 هـ / AH / H)
+const txt = s => esc(String(s ?? '').trim().replace(/(\d) +(هـ|ه|AH|H)(?=[\s.,،:]|$)/gm, '$1\u00A0$2'));
 const getP = (o, p) => p.split('.').reduce((a,k)=>a?.[k], o);
 function setP(o, p, v){ const ks = p.split('.'); const last = ks.pop(); const t = ks.reduce((a,k)=>a[k], o); t[last] = v; }
 function toast(m){ const t = document.getElementById('toast'); t.textContent = m; t.classList.add('show'); clearTimeout(t._h); t._h = setTimeout(()=>t.classList.remove('show'), 2600); }
@@ -178,6 +184,7 @@ function buildSide(){
     <button data-tpl="landscape" class="${t==='landscape'?'on':''}">▭ عرضي</button>
     <button data-tpl="timeline" class="${t==='timeline'?'on':''}">⟿ خط زمني</button>
     <button data-tpl="wall" class="${t==='wall'?'on':''}">▦ جداري</button>
+    <button data-tpl="wall4" class="${t==='wall4'?'on':''}">▤ OPTION 4</button>
     <button data-tpl="sidepanel" class="${t==='sidepanel'?'on':''}">◧ جانبي</button>
   </div>`;
   if(!isTL(t)){ h += photoBlock(t) + textBlock(t); }
@@ -187,16 +194,16 @@ function buildSide(){
       ${tx('timeline.name_ar','اسم النادي')}${tx('timeline.name_en','Club name (EN)','ltr')}
       ${tx('timeline.sl_ar','الشعار')}
       <button class="btn sm" style="margin-top:8px" data-trhead>🌐 ترجم الشعار</button>
-      ${tx('timeline.sl_en','Slogan (EN)','ltr')}${tx('timeline.sl_fr','Devise (FR)','ltr')}
+      ${tx('timeline.sl_en','Slogan (EN)','ltr')}${t==='wall4'?'':tx('timeline.sl_fr','Devise (FR)','ltr')}
       ${rg('timeline.fs','حجم الخط',12,28,.5)}
     </fieldset>
     <fieldset><legend>الشكل والنهاية</legend>
-      <label>الخلفية</label>
-      <select data-b="timeline.bg"><option value="old" ${T.bg==='old'?'selected':''}>ورق تاريخي قديم</option><option value="plain" ${T.bg==='plain'?'selected':''}>بيج سادة</option></select>
+      ${t==='wall4' ? `${T.entries.length!==8?`<div class="hint" style="color:var(--m)">هذا التصميم مخصص لـ 8 محطات بالضبط (الحالية ${T.entries.length}).</div>`:''}` : `<label>الخلفية</label>
+      <select data-b="timeline.bg"><option value="old" ${T.bg==='old'?'selected':''}>ورق تاريخي قديم</option><option value="plain" ${T.bg==='plain'?'selected':''}>بيج سادة</option></select>`}
       <label><input type="checkbox" data-b="timeline.sepia" data-chk ${T.sepia?'checked':''}> صور بلون قديم (سيبيا)</label>
       ${tx('timeline.end_ar','عبارة النهاية')}
       <button class="btn sm" style="margin-top:8px" data-trend>🌐 ترجم العبارة</button>
-      ${tx('timeline.end_en','End (EN)','ltr')}${tx('timeline.end_fr','Fin (FR)','ltr')}
+      ${tx('timeline.end_en','End (EN)','ltr')}${t==='wall4'?'':tx('timeline.end_fr','Fin (FR)','ltr')}
     </fieldset>
     <fieldset><legend>المحطات (${T.entries.length})</legend>
     <button class="btn pri" style="width:100%;margin-bottom:10px" data-trall>🌐 ترجم جميع المحطات</button>`;
@@ -210,12 +217,12 @@ function buildSide(){
         ${tx(b+'.t_ar','العنوان')}
         ${ta(b+'.d_ar','الوصف','rtl',2)}
         <div class="row" style="margin-top:8px"><button class="btn sm pri" data-pick="${b}.photo">📷 صورة</button>${e.photo?`<button class="btn sm danger" data-clear="${b}.photo">إزالة الصورة</button>`:''}<button class="btn sm" data-tre="${i}">🌐 ترجم</button></div>
-        ${e.photo?`<img class="thumb" src="${e.photo}">`:''}
+        ${e.photo?`<img class="thumb" src="${e.photo}">${rg(b+'.px','تحريك الصورة أفقياً',0,100)}${rg(b+'.py','تحريك الصورة رأسياً',0,100)}`:''}
         ${tx(b+'.t_en','Title (EN)','ltr')}${ta(b+'.d_en','Description (EN)','ltr',2)}
-        ${tx(b+'.t_fr','Titre (FR)','ltr')}${ta(b+'.d_fr','Description (FR)','ltr',2)}
+        ${t==='wall4'?'':tx(b+'.t_fr','Titre (FR)','ltr')+ta(b+'.d_fr','Description (FR)','ltr',2)}
       </div>`;
     });
-    h += `<button class="btn" style="width:100%" data-add>＋ إضافة محطة</button>
+    h += `${t==='wall4'&&T.entries.length>=8?'':'<button class="btn" style="width:100%" data-add>＋ إضافة محطة</button>'}
       <button class="btn sm" style="width:100%;margin-top:6px" data-resettl>↺ استعادة المحطات الافتراضية (8)</button>
       <div class="hint">يُفضّل من 5 إلى 9 محطات. الصورة لكل محطة اختيارية.</div></fieldset>`;
   }
@@ -231,8 +238,8 @@ function photoHTML(P, cls=''){
 }
 const logoSrc = () => S.logo || LOGO;
 
-const SIZES = {portrait:[1200,1800], landscape:[2100,1500], timeline:[3200,1800], wall:WALL_SIZE, sidepanel:[1920,1600]};
-const isTL = t => t==='timeline' || t==='wall';   // التصميمان يستخدمان نفس بيانات المحطات
+const SIZES = {portrait:[1200,1800], landscape:[2100,1500], timeline:[3200,1800], wall:WALL_SIZE, wall4:[2520,2610], sidepanel:[1920,1600]};
+const isTL = t => t==='timeline' || t==='wall' || t==='wall4';   // التصميمان يستخدمان نفس بيانات المحطات
 
 function render(){
   const t = S.template, el = document.getElementById('design');
@@ -242,17 +249,17 @@ function render(){
     h = `<div class="d portrait" style="--fs:${P.fs}px">
       <div class="top">
         <div class="card side fit" data-var="--sfs" data-max="${P.sfs}" style="--sfs:${P.sfs}px">
-          <div class="t ar">${esc(P.side_ar)}</div>
-          <div class="hr"></div><div class="t">${esc(P.side_en)}</div>
-          <div class="hr"></div><div class="t"><i>${esc(P.side_fr)}</i></div>
+          <div class="t ar">${txt(P.side_ar)}</div>
+          <div class="hr"></div><div class="t">${txt(P.side_en)}</div>
+          <div class="hr"></div><div class="t"><i>${txt(P.side_fr)}</i></div>
         </div>
         ${photoHTML(P,'card')}
       </div>
       <div class="card cap">
         <div style="display:flex;justify-content:center"><img class="logo" src="${logoSrc()}"></div>
-        <div class="col"><div class="t">${esc(P.fr)}</div></div>
-        <div class="col"><div class="t">${esc(P.en)}</div></div>
-        <div class="col ar"><div class="t ar">${esc(P.ar)}</div></div>
+        <div class="col"><div class="t">${txt(P.fr)}</div></div>
+        <div class="col"><div class="t">${txt(P.en)}</div></div>
+        <div class="col ar"><div class="t ar">${txt(P.ar)}</div></div>
       </div></div>`;
   } else if(t==='landscape'){
     const P = S.landscape;
@@ -260,9 +267,9 @@ function render(){
       ${photoHTML(P,'card')}
       <div class="card cap">
         <div style="display:flex;justify-content:center"><img class="logo" src="${logoSrc()}"></div>
-        <div class="col"><div class="t">${esc(P.fr)}</div></div>
-        <div class="col"><div class="t">${esc(P.en)}</div></div>
-        <div class="col ar"><div class="t ar">${esc(P.ar)}</div></div>
+        <div class="col"><div class="t">${txt(P.fr)}</div></div>
+        <div class="col"><div class="t">${txt(P.en)}</div></div>
+        <div class="col ar"><div class="t ar">${txt(P.ar)}</div></div>
       </div>
     </div>`;
   } else if(t==='sidepanel'){
@@ -271,14 +278,16 @@ function render(){
     h = `<div class="d sidepanel">
       <div class="card side fit" style="--fs:${P.fs}px" data-max="${P.fs}">
         <img class="logo" src="${logoSrc()}">
-        <div class="hr"></div><div class="t ar">${esc(P.ar)}</div>
-        <div class="hr"></div><div class="t">${esc(P.en)}</div>
-        <div class="hr"></div><div class="t">${esc(P.fr)}</div>
+        <div class="hr"></div><div class="t ar">${txt(P.ar)}</div>
+        <div class="hr"></div><div class="t">${txt(P.en)}</div>
+        <div class="hr"></div><div class="t">${txt(P.fr)}</div>
       </div>
       ${photoHTML(P,'card')}
     </div>`;
   } else if(t==='wall'){
     h = renderWall();
+  } else if(t==='wall4'){
+    h = renderWall4();
   } else {
     const T = S.timeline, [W,H] = SIZES.timeline, n = Math.max(T.entries.length,1);
     const x0 = 150, avail = W - x0 - 420, slot = avail/n, cw = Math.min(slot - 76, 440), phH = 190;
@@ -324,7 +333,7 @@ function render(){
       ${paper}
       <div class="hd"><img class="logo" src="${logoSrc()}">
         <div class="n-ar">${esc(T.name_ar)}</div><div class="n-en">${esc(T.name_en)}</div>
-        <div class="sl-ar">${esc(T.sl_ar)}</div><div class="sl">${esc(T.sl_en)}</div><div class="sl" style="text-transform:none;font-style:italic">${esc(T.sl_fr)}</div>
+        <div class="sl-ar">${esc(T.sl_ar)}</div><div class="sl">${esc(T.sl_en)}</div><div class="sl fr">${esc(T.sl_fr)}</div>
       </div>
       <svg class="path" width="${W}" height="${H}">
         <path d="${d}" fill="none" stroke="#7a1c1c" stroke-width="6" stroke-linecap="round"/>
@@ -349,7 +358,7 @@ function render(){
       h += `<div class="tc fit" data-group="tl" data-max="${T.fs}" style="left:${left}px;top:${txtTop}px;width:${cw}px;height:${lowLimit-txtTop}px;--fs:${T.fs}px">
           <div class="yr">${esc(e.year)}</div>
           <div class="ti-ar">${esc(e.t_ar)}</div><div class="ti-en">${esc(e.t_en)}</div><div class="ti-fr">${esc(e.t_fr)}</div>
-          <div class="t ar">${esc(e.d_ar)}</div><div class="t">${esc(e.d_en)}</div><div class="t"><i>${esc(e.d_fr)}</i></div>
+          <div class="t ar">${txt(e.d_ar)}</div><div class="t">${txt(e.d_en)}</div><div class="t"><i>${txt(e.d_fr)}</i></div>
         </div>`;
     });
     h += `</div>`;
@@ -374,12 +383,25 @@ function autoFit(){
 }
 function fitStage(){
   const [W,H] = SIZES[S.template], st = document.getElementById('stage');
-  const s = Math.min((st.clientWidth-48)/W, (st.clientHeight-48)/H, 1);
+  if(!st.clientWidth) return;   // المعاينة مخفية (تبويب التعديل في الجوال)
+  const pad = parseFloat(getComputedStyle(st).paddingLeft) * 2;
+  const s = Math.min((st.clientWidth-pad)/W, (st.clientHeight-pad)/H, 1);
   const box = document.getElementById('box'), sc = document.getElementById('scaler');
   box.style.width = W*s+'px'; box.style.height = H*s+'px';
   sc.style.transform = `scale(${s})`;
 }
 window.addEventListener('resize', fitStage);
+
+/* ---------- الجوال: تبويبا معاينة/تعديل ---------- */
+document.getElementById('mobtabs').addEventListener('click', e=>{
+  const b = e.target.closest('[data-view]'); if(!b) return;
+  const v = b.dataset.view;
+  document.body.classList.toggle('m-preview', v==='preview');
+  document.body.classList.toggle('m-edit', v==='edit');
+  document.querySelectorAll('#mobtabs button').forEach(x=>x.classList.toggle('on', x===b));
+  if(v==='preview') render();   // ضبط حجم الخط يحتاج المعاينة ظاهرة
+});
+matchMedia('(max-width:900px)').addEventListener('change', ()=>render());
 
 /* ---------- Image picking ---------- */
 let pickTarget = null;
@@ -457,12 +479,13 @@ document.getElementById('exp').addEventListener('click', async e=>{
       fmt === 'jpg' ? 'image/jpeg' : 'image/png', 0.95));
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    const name = {portrait:'لوحة-طولية', landscape:'لوحة-عرضية', timeline:'خط-زمني', wall:'تصميم-جداري', sidepanel:'لوحة-جانبية'}[S.template];
+    const name = {portrait:'لوحة-طولية', landscape:'لوحة-عرضية', timeline:'خط-زمني', wall:'تصميم-جداري', wall4:'جداري-option4', sidepanel:'لوحة-جانبية'}[S.template];
     a.download = `${name}-${new Date().toISOString().slice(0,16).replace(/[T:]/g,'-')}.${fmt}`; a.href = url;
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(()=>URL.revokeObjectURL(url), 60000);
     canvas.width = canvas.height = 0;   // تحرير الذاكرة
-    toast(`تم التصدير ✔ (${(blob.size/1048576).toFixed(1)} MB)`);
+    const lowRes = S.template==='wall4' ? S.timeline.entries.slice(0,8).filter(e=>!e.photo).length : 0;
+    toast(lowRes ? `تم التصدير ✔ لكن ${lowRes} من الصور عينات منخفضة الدقة — استبدلها بالأصلية قبل الطباعة` : `تم التصدير ✔ (${(blob.size/1048576).toFixed(1)} MB)`);
   }catch(err){ console.error(err); toast('تعذّر التصدير'); showError('تعذّر التصدير: '+(err && err.message || err) + ' — جرّب جودة أقل (×2) أو صيغة JPG'); }
   b.disabled = false; b.textContent = '⬇ تصدير';
 });

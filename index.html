@@ -5,9 +5,10 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>صانع لوحات النادي الفيصلي</title>
 <script src="js/fonts.js"></script>
+<script src="js/wall4-fonts.js"></script>
 <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body class="m-preview">
 <aside id="side"></aside>
 <main>
   <div class="toolbar">
@@ -25,17 +26,24 @@
     <button class="btn sm" id="saveProj">💾 حفظ المشروع</button>
     <button class="btn sm" id="openProj">📂 فتح مشروع</button>
     <button class="btn sm danger" id="clearCur">🗑 لوحة جديدة</button>
+    <div class="mhint">التصدير النهائي من الكمبيوتر: احفظ المشروع هنا ثم افتحه هناك.</div>
     <input type="file" id="projFile" accept=".json" hidden>
     <input type="file" id="hiddenImg" accept="image/*" hidden>
   </div>
   <div id="stage"><div id="box"><div id="scaler"><div id="design"></div></div></div></div>
 </main>
+<nav id="mobtabs">
+  <button data-view="preview" class="on">👁 معاينة</button>
+  <button data-view="edit">✏️ تعديل</button>
+</nav>
 <div id="toast"></div>
 <div id="errbar" hidden></div>
 
 <script src="js/vendor/html-to-image.js"></script>
 <script src="js/logo.js"></script>
 <script src="js/wall.js"></script>
+<script src="js/wall4-samples.js"></script>
+<script src="js/wall4.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

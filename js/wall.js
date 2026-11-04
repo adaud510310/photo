@@ -46,7 +46,7 @@ function renderWall(){
   const x0 = 200, step = n > 1 ? (W - x0 - 680) / (n - 1) : 0;
   const yU = 1200, yT = 680, yL = 1900, phH = 270, bottom = H - 120;
   const fs = +(T.fs * 1.45).toFixed(1);   // الخط أكبر لأن اللوحة الجدارية كبيرة
-  const narrow = step - 78;
+  const narrow = step - 88;
   const isUp = i => (i === n - 1) || i % 2 === 0;
 
   // حساب موضع كل محطة
@@ -128,9 +128,9 @@ function renderWall(){
         <div class="ti-en">${esc(e.t_en)}</div>
         <div class="ti-fr">${esc(e.t_fr)}</div>
         <div class="sep"></div>
-        <div class="t ar">${esc(e.d_ar)}</div>
-        <div class="t en">${esc(e.d_en)}</div>
-        <div class="t fr">${esc(e.d_fr)}</div>
+        <div class="t ar">${txt(e.d_ar)}</div>
+        <div class="t en">${txt(e.d_en)}</div>
+        <div class="t fr">${txt(e.d_fr)}</div>
       </div>`;
   });
 
