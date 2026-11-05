@@ -60,7 +60,7 @@ function renderWall4(){
     const st = e.photo ? `object-position:${e.px}% ${e.py}%` : 'object-position:50% 50%';
     blocks += `<div class="w4ph ${T.sepia && e.photo ? 'old' : ''}" data-entry="${i}" style="left:${X(px)}px;top:${Y(py)}px;width:${pw * k}px;height:${ph * k}px"><img src="${src}" style="${st}"></div>
       <div class="w4yr" style="left:${X(yx)}px;top:${Y(ycy) - ysz * k * .6}px;font-size:${ysz * k}px;line-height:${ysz * k * 1.2}px">${esc(e.year)}</div>
-      <div class="w4tx fit ${s.big ? 'big' : ''}" data-group="wall4" data-max="${(34 * scale).toFixed(1)}" style="left:${X(tx)}px;top:${Y(ty)}px;width:${tw * k}px;height:${th * k}px;--fs:${(34 * scale).toFixed(1)}px">
+      <div class="w4tx fit ${s.big ? 'big' : ''}" data-group="wall4" data-max="${(30 * scale).toFixed(1)}" style="left:${X(tx)}px;top:${Y(ty)}px;width:${tw * k}px;height:${th * k}px;--fs:${(30 * scale).toFixed(1)}px">
         <div class="ti-ar">${esc(e.t_ar)}</div>
         <div class="ti-en">${esc(e.t_en)}</div>
         <div class="ds-ar" style="width:${s.ar * k}px${s.arF ? `;font-size:calc(var(--fs)*${s.arF})` : ''}">${txt(e.d_ar)}</div>

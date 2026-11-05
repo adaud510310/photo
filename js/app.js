@@ -1,10 +1,14 @@
 let LOGO = window.LOGO_RAW || '';
 
 /* show any error on screen instead of failing silently */
+function clearError(){ const b = document.getElementById('errbar'); if(b) b.hidden = true; }
 function showError(msg){
   const b = document.getElementById('errbar');
   if(!b) return;
-  b.textContent = '⚠ ' + msg;
+  b.textContent = '⚠ ' + msg + ' ';
+  const x = document.createElement('button');
+  x.textContent = '✕'; x.title = 'إغلاق'; x.onclick = clearError;
+  b.append(x);
   b.hidden = false;
 }
 window.addEventListener('error', e => showError('خطأ: ' + e.message));
@@ -54,30 +58,75 @@ const DEFAULTS = () => ({
 function E(year, tar, ten, tfr, dar, den, dfr){ return {year, t_ar:tar, t_en:ten, t_fr:tfr, d_ar:dar, d_en:den, d_fr:dfr, photo:null, px:50, py:50}; }
 
 const KEY = 'faisaly-museum-panels-v1';
-let S = load() || DEFAULTS();
-(function fillMissing(){ const D = DEFAULTS(); for(const t of ['portrait','landscape','sidepanel','timeline']){ if(!S[t]) S[t] = D[t]; for(const k in D[t]) if(!(k in S[t])) S[t][k] = D[t][k]; }
-  // تحديث صياغة المرجع للمشاريع المحفوظة — فقط إذا كان النص ما زال الافتراضي القديم
-  const OLD = {"Steady steps towards the first achievements.":"A step towards distinction.","جماهير أوفى وحضور أكبر في مختلف المسابقات":"جماهير أوفى ..\nوحضور أكبر\nفي مختلف المسابقات","Winning titles and establishing the club among the leading teams.":"Winning titles and establishing the club's status among the leading teams.","الفيصلي حاضر دائماً بجماهيره وتاريخه وطموحه":"الفيصلي حاضر دائماً ..\nبجماهيره وتاريخه\nوطموحه"};
-  S.timeline.entries.forEach(e => { for(const k of ['d_ar','d_en']) if(OLD[e[k]]) e[k] = OLD[e[k]]; });
-})();
-
-function load(){
-  try{
-    const j = localStorage.getItem(KEY);
-    if(!j) return null;
-    const o = JSON.parse(j);
-    if(!o || !o.portrait || !o.landscape || !o.timeline || !Array.isArray(o.timeline.entries)) return null;
-    return o;
-  }catch(e){ return null; }
+const TEMPLATES = ['portrait','landscape','sidepanel','timeline','wall','wall4'];
+const isObj = o => !!o && typeof o === 'object' && !Array.isArray(o);
+const safeImg = v => (typeof v === 'string' && v.startsWith('data:image/') && !/["<>]/.test(v)) ? v : null;
+const ENUMS = {fit:['cover','contain'], bg:['old','plain']};
+function cleanVal(v, d, k){
+  if(k === 'photo') return safeImg(v);
+  if(ENUMS[k]) return ENUMS[k].includes(v) ? v : d;
+  if(typeof d === 'number') return Number.isFinite(v) ? v : d;
+  return typeof v === typeof d ? v : d;
 }
+/* يبني حالة سليمة من أي بيانات محفوظة أو ملف مفتوح؛ يرجع null إذا لم تكن مشروعاً */
+function normalize(o){
+  if(!isObj(o) || !['portrait','landscape','sidepanel','timeline'].some(t => isObj(o[t]))) return null;
+  if('timeline' in o && !(isObj(o.timeline) && Array.isArray(o.timeline.entries))) return null;
+  const out = DEFAULTS();
+  if(TEMPLATES.includes(o.template)) out.template = o.template;
+  out.logo = safeImg(o.logo);
+  for(const t of ['portrait','landscape','sidepanel','timeline']){
+    if(!isObj(o[t])) continue;
+    for(const k in out[t]) if(k !== 'entries') out[t][k] = cleanVal(o[t][k], out[t][k], k);
+  }
+  if(o.timeline){
+    const blank = E('','','','','','','');
+    out.timeline.entries = o.timeline.entries.filter(isObj).map(e => {
+      const n = {...blank};
+      for(const k in n) n[k] = cleanVal(e[k], blank[k], k);
+      return n;
+    });
+  }
+  // صياغة المرجع — فقط إذا كان النص ما زال الافتراضي القديم
+  const OLD = {"Steady steps towards the first achievements.":"A step towards distinction.","جماهير أوفى وحضور أكبر في مختلف المسابقات":"جماهير أوفى ..\nوحضور أكبر\nفي مختلف المسابقات","Winning titles and establishing the club among the leading teams.":"Winning titles and establishing the club's status among the leading teams.","الفيصلي حاضر دائماً بجماهيره وتاريخه وطموحه":"الفيصلي حاضر دائماً ..\nبجماهيره وتاريخه\nوطموحه"};
+  out.timeline.entries.forEach(e => { for(const k of ['d_ar','d_en']) if(OLD[e[k]]) e[k] = OLD[e[k]]; });
+  return out;
+}
+function load(){
+  try{ return normalize(JSON.parse(localStorage.getItem(KEY))); }catch(e){ return null; }
+}
+let S = load() || DEFAULTS();
+
+/* الحفظ التلقائي في IndexedDB: مساحته تتسع للصور الأصلية بخلاف localStorage (نحو 5MB) */
+function idbRun(mode, fn){
+  return new Promise((res, rej) => {
+    const q = indexedDB.open('faisaly-panels', 1);
+    q.onupgradeneeded = () => q.result.createObjectStore('state');
+    q.onerror = () => rej(q.error);
+    q.onsuccess = () => {
+      const db = q.result, tx = db.transaction('state', mode), r = fn(tx.objectStore('state'));
+      tx.oncomplete = () => { db.close(); res(r.result); };
+      tx.onerror = tx.onabort = () => { db.close(); rej(tx.error); };
+    };
+  });
+}
+const idbGet = () => idbRun('readonly', st => st.get('current'));
+const idbSet = v => idbRun('readwrite', st => st.put(v, 'current'));
 let saveT;
 function save(){
   clearTimeout(saveT);
-  saveT = setTimeout(()=>{
-    try{ localStorage.setItem(KEY, JSON.stringify(S)); }
-    catch(e){ toast('الصور كبيرة على الحفظ التلقائي — استخدم "حفظ المشروع"'); }
+  saveT = setTimeout(async ()=>{
+    try{ await idbSet(S); try{ localStorage.removeItem(KEY); }catch(e){} }
+    catch(e){
+      try{ localStorage.setItem(KEY, JSON.stringify(S)); }
+      catch(e2){ showError('تعذّر الحفظ التلقائي — آخر تعديلاتك غير محفوظة، استخدم "حفظ المشروع"'); }
+    }
   }, 400);
 }
+
+/* تراجع واحد عن العمليات التي تستبدل العمل (لوحة جديدة، فتح مشروع، حذف محطة...) */
+let undoS = null;
+function snapshot(){ undoS = structuredClone(S); document.getElementById('undo').hidden = false; }
 
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 // بدون أسطر فارغة في الأطراف، ولا تنفصل السنة عن علامتها (1396 هـ / AH / H)
@@ -114,29 +163,57 @@ function prepLogo(src){
 }
 
 /* ---------- Translation ---------- */
+function chunkText(text, max){
+  const out = []; let cur = '';
+  for(const w of text.split(' ')){
+    if(cur && (cur + ' ' + w).length > max){ out.push(cur); cur = w; }
+    else cur = cur ? cur + ' ' + w : w;
+  }
+  if(cur) out.push(cur);
+  return out;
+}
 async function translate(text, tl){
   text = (text||'').trim(); if(!text) return '';
   try{
     const r = await fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl=ar&tl='+tl+'&dt=t&q='+encodeURIComponent(text));
     if(!r.ok) throw 0;
     const j = await r.json();
-    return j[0].map(x=>x[0]).join('');
+    const out = j[0].map(x=>x[0]).join('');
+    if(!out) throw 0;
+    return out;
   }catch(e){
-    const parts = text.split('\n'), out = [];
-    for(const part of parts){
+    const out = [];
+    for(const part of text.split('\n')){
       if(!part.trim()){ out.push(''); continue; }
-      const r = await fetch('https://api.mymemory.translated.net/get?q='+encodeURIComponent(part.slice(0,480))+'&langpair=ar|'+tl);
-      const j = await r.json(); out.push(j.responseData.translatedText);
+      const pieces = [];
+      for(const chunk of chunkText(part, 480)){
+        const r = await fetch('https://api.mymemory.translated.net/get?q='+encodeURIComponent(chunk)+'&langpair=ar|'+tl);
+        if(!r.ok) throw new Error('translation failed');
+        const j = await r.json(), t = j.responseData && j.responseData.translatedText;
+        if(+j.responseStatus !== 200 || !t || /MYMEMORY WARNING|INVALID/i.test(t)) throw new Error('translation failed');
+        pieces.push(t);
+      }
+      out.push(pieces.join(' '));
     }
     return out.join('\n');
   }
 }
 async function doTranslate(btn, pairs){
+  // الهدف كائن وليس رقماً: تبقى الترجمة مع محطتها إذا نُقلت أثناء الانتظار
+  const jobs = pairs.map(([src, dst, tl]) => {
+    const ks = dst.split('.'), key = ks.pop();
+    return {text: String(getP(S, src) || '').trim(), obj: ks.reduce((a,k)=>a[k], S), key, tl};
+  }).filter(j => j.text);          // لا تمسح ترجمة يدوية إذا كان العربي فارغاً
+  if(!jobs.length){ toast('اكتب النص العربي أولاً'); return; }
   btn.disabled = true; const old = btn.textContent; btn.textContent = '... جاري الترجمة';
+  let done = 0;
   try{
-    for(const [src, dst, tl] of pairs){ setP(S, dst, await translate(getP(S, src), tl)); }
-    buildSide(); render(); save(); toast('تمت الترجمة — راجع النص قبل الطباعة');
-  }catch(e){ toast('تعذّرت الترجمة — تأكد من الاتصال بالإنترنت'); }
+    for(const j of jobs){ j.obj[j.key] = await translate(j.text, j.tl); done++; }
+  }catch(e){ console.warn(e); }
+  buildSide(); render(); save();
+  toast(done === jobs.length ? 'تمت الترجمة — راجع النص قبل الطباعة'
+    : done ? `تُرجم ${done} من ${jobs.length} فقط — أعد المحاولة بعد التأكد من الاتصال`
+    : 'تعذّرت الترجمة — لم يتغير النص، تأكد من الاتصال بالإنترنت');
   btn.disabled = false; btn.textContent = old;
 }
 
@@ -366,20 +443,38 @@ function render(){
   el.innerHTML = h;
   autoFit(); fitStage();
 }
+const HEADER_MAX = {hd:760, whd:980, w4hd:780};   // أقصى عرض لنصوص الشعار في كل تصميم
+function fitHeaders(){
+  document.querySelectorAll('.hd,.whd,.w4hd').forEach(h => {
+    h.style.removeProperty('--u');
+    const u = parseFloat(getComputedStyle(h).getPropertyValue('--u'));
+    const w = Math.max(0, ...[...h.querySelectorAll('.n-ar,.n-en,.sl-ar,.sl')].map(e => e.offsetWidth));
+    const max = HEADER_MAX[h.className.split(' ')[0]];
+    if(w > max) h.style.setProperty('--u', (u * max / w) + 'px');
+  });
+}
+let fitOverflow = 0;
 function autoFit(){
   const groups = {};
-  document.querySelectorAll('#design .fit').forEach(f=>{
+  const boxes = [...document.querySelectorAll('#design .fit')];
+  boxes.forEach(f=>{
     const v = f.dataset.var || '--fs';
     let fs = parseFloat(f.dataset.max);
     f.style.setProperty(v, fs+'px');
     while(f.scrollHeight > f.clientHeight+1 && fs > 9){ fs -= .5; f.style.setProperty(v, fs+'px'); }
     if(f.dataset.group) (groups[f.dataset.group] = groups[f.dataset.group] || []).push({f, v, fs});
   });
-  // نفس حجم الخط لكل عناصر المجموعة = أصغر حجم مناسب
+  // نفس حجم الخط لكل المجموعة، لكن نص طويل واحد لا يصغّر الباقي تحت 75%
   for(const g in groups){
-    const min = Math.min(...groups[g].map(x=>x.fs));
-    groups[g].forEach(x=>x.f.style.setProperty(x.v, min+'px'));
+    const floor = parseFloat(groups[g][0].f.dataset.max) * .75;
+    const base = Math.max(Math.min(...groups[g].map(x=>x.fs)), floor);
+    groups[g].forEach(x=>x.f.style.setProperty(x.v, Math.min(x.fs, base)+'px'));
   }
+  fitHeaders();
+  if(!document.getElementById('stage').clientWidth) return;   // المعاينة مخفية: تُفحص عند ظهورها
+  const over = boxes.filter(f => f.scrollHeight > f.clientHeight+1).length;
+  if(over && !fitOverflow) toast('نص طويل لا يتسع في إطاره وسيُقص — اختصره قبل الطباعة');
+  fitOverflow = over;
 }
 function fitStage(){
   const [W,H] = SIZES[S.template], st = document.getElementById('stage');
@@ -437,10 +532,10 @@ side.addEventListener('click', e=>{
   else if(d.trall !== undefined){ const pairs = []; S.timeline.entries.forEach((_,i)=>{ const p='timeline.entries.'+i; ['t','d'].forEach(k=>{ pairs.push([`${p}.${k}_ar`,`${p}.${k}_en`,'en'],[`${p}.${k}_ar`,`${p}.${k}_fr`,'fr']); }); }); doTranslate(b, pairs); }
   else if(d.trside !== undefined){ doTranslate(b, [['portrait.side_ar','portrait.side_en','en'],['portrait.side_ar','portrait.side_fr','fr']]); }
   else if(d.trend !== undefined){ doTranslate(b, [['timeline.end_ar','timeline.end_en','en'],['timeline.end_ar','timeline.end_fr','fr']]); }
-  else if(d.resettl !== undefined){ if(confirm('استبدال المحطات الحالية بالمحطات الافتراضية؟')){ S.timeline.entries = DEFAULTS().timeline.entries; buildSide(); render(); save(); } }
+  else if(d.resettl !== undefined){ if(confirm('استبدال المحطات الحالية بالمحطات الافتراضية؟')){ snapshot(); S.timeline.entries = DEFAULTS().timeline.entries; buildSide(); render(); save(); } }
   else if(d.trhead !== undefined){ doTranslate(b, [['timeline.sl_ar','timeline.sl_en','en'],['timeline.sl_ar','timeline.sl_fr','fr']]); }
   else if(d.add !== undefined){ S.timeline.entries.push(E('','','','','','','')); buildSide(); render(); save(); side.scrollTop = side.scrollHeight; }
-  else if(d.del !== undefined){ if(confirm('حذف هذه المحطة؟')){ S.timeline.entries.splice(+d.del,1); buildSide(); render(); save(); } }
+  else if(d.del !== undefined){ if(confirm('حذف هذه المحطة؟')){ snapshot(); S.timeline.entries.splice(+d.del,1); buildSide(); render(); save(); } }
   else if(d.mv !== undefined){ const a = S.timeline.entries, i = +d.mv, j = i + +d.d; [a[i],a[j]] = [a[j],a[i]]; buildSide(); render(); save(); }
 });
 const designEl = document.getElementById('design');
@@ -464,7 +559,7 @@ stage.addEventListener('drop', e=>{
 
 /* ---------- Export ---------- */
 document.getElementById('exp').addEventListener('click', async e=>{
-  const b = e.currentTarget; b.disabled = true; b.textContent = '... جاري التصدير';
+  const b = e.currentTarget; b.disabled = true; b.textContent = '... جاري التصدير'; clearError();
   try{
     await document.fonts.ready;
     const node = designEl.firstElementChild;
@@ -491,37 +586,66 @@ document.getElementById('exp').addEventListener('click', async e=>{
 });
 
 /* ---------- Project files ---------- */
-document.getElementById('saveProj').onclick = ()=>{
-  const blob = new Blob([JSON.stringify(S)], {type:'application/json'});
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-  a.download = `مشروع-لوحات-${new Date().toISOString().slice(0,10)}.json`; a.click();
-};
+function downloadJSON(data, name){
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(data)], {type:'application/json'}));
+  a.download = name; a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 60000);
+}
+const refresh = () => { buildSide(); render(); save(); };
+document.getElementById('saveProj').onclick = ()=> downloadJSON(S, `مشروع-لوحات-${new Date().toISOString().slice(0,10)}.json`);
 document.getElementById('openProj').onclick = ()=> document.getElementById('projFile').click();
 document.getElementById('projFile').addEventListener('change', async e=>{
   const f = e.target.files[0]; if(!f) return;
-  try{ S = Object.assign(DEFAULTS(), JSON.parse(await f.text())); buildSide(); render(); save(); toast('تم فتح المشروع'); }
-  catch(err){ toast('ملف غير صالح'); }
   e.target.value = '';
+  let next = null;
+  try{ next = normalize(JSON.parse(await f.text())); }catch(err){}
+  if(!next){ toast('هذا الملف ليس مشروع لوحات — لم يتغير عملك'); return; }
+  snapshot(); S = next; refresh();
+  toast('تم فتح المشروع — يمكنك التراجع بزر "تراجع"');
 });
+document.getElementById('undo').onclick = ()=>{
+  if(!undoS) return;
+  S = undoS; undoS = null;
+  document.getElementById('undo').hidden = true;
+  refresh(); toast('تم التراجع');
+};
 document.getElementById('clearCur').onclick = ()=>{
-  if(!confirm('تفريغ اللوحة الحالية (الصورة والنصوص)؟')) return;
   const t = S.template;
-  if(isTL(t)){ S.timeline.entries = [E('','','','','','','')]; }
-  else Object.assign(S[t], {photo:null, ar:'', en:'', fr:'', px:50, py:50, zoom:100});
-  buildSide(); render(); save();
+  const msg = isTL(t)
+    ? 'تفريغ كل المحطات وصورها؟\nالمحطات مشتركة، فسيشمل ذلك التصاميم الثلاثة: خط زمني، جداري، OPTION 4.'
+    : 'تفريغ اللوحة الحالية (الصورة والنصوص)؟';
+  if(!confirm(msg)) return;
+  snapshot();
+  if(isTL(t)) S.timeline.entries = S.timeline.entries.map(()=>E('','','','','','',''));
+  else{
+    Object.assign(S[t], {photo:null, ar:'', en:'', fr:'', px:50, py:50, zoom:100, fit:'cover', gray:false});
+    if(t==='portrait') Object.assign(S[t], {side_ar:'', side_en:'', side_fr:''});
+  }
+  refresh();
+  toast('تم التفريغ — يمكنك التراجع بزر "تراجع"');
 };
 
 /* ---------- Init ---------- */
 (async ()=>{
   if(!window.htmlToImage) showError('مكتبة التصدير لم تُحمّل — تأكد أن مجلد js/vendor موجود بجانب index.html');
   LOGO = await prepLogo(LOGO);
-  const ht = location.hash.slice(1); if(SIZES[ht]) S.template = ht;
+  let saved = null;
+  try{ saved = normalize(await idbGet()); }catch(e){}
+  if(saved) S = saved;
+  else if(localStorage.getItem(KEY)) save();     // نقل الحفظ القديم إلى IndexedDB
+  const ht = location.hash.slice(1); if(Object.hasOwn(SIZES, ht)) S.template = ht;
   try{ buildSide(); render(); }
   catch(err){
     console.error(err);
-    S = DEFAULTS(); save();
-    buildSide(); render();
-    toast('تمت إعادة الضبط بسبب بيانات محفوظة تالفة');
+    // لا نمسح المحفوظ: نجرّب تصميماً آخر، ثم نبدأ مؤقتاً مع تنزيل نسخة احتياطية
+    try{ S.template = 'landscape'; buildSide(); render(); showError('تعذّر فتح التصميم المحفوظ — فُتح التصميم العرضي، وبياناتك كما هي'); }
+    catch(err2){
+      console.error(err2);
+      downloadJSON(S, 'نسخة-احتياطية-لوحات.json');
+      S = DEFAULTS(); buildSide(); render();
+      showError('تعذّرت قراءة البيانات المحفوظة — نزّلنا لك نسخة احتياطية منها');
+    }
   }
   document.fonts.ready.then(render);
 })();

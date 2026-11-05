@@ -43,10 +43,10 @@ function roundedPath(P, r){
 function renderWall(){
   const T = S.timeline, [W, H] = WALL_SIZE;
   const ents = T.entries, n = ents.length;
-  const x0 = 200, step = n > 1 ? (W - x0 - 680) / (n - 1) : 0;
+  const x0 = 200, step = n > 1 ? Math.min((W - x0 - 680) / (n - 1), 700) : 0;
   const yU = 1200, yT = 680, yL = 1900, phH = 270, bottom = H - 120;
   const fs = +(T.fs * 1.45).toFixed(1);   // الخط أكبر لأن اللوحة الجدارية كبيرة
-  const narrow = step - 88;
+  const narrow = n > 1 ? Math.min(step - 88, 560) : 460;   // محطة أو محطتان لا تتمدد ولا تنكمش
   const isUp = i => (i === n - 1) || i % 2 === 0;
 
   // حساب موضع كل محطة
