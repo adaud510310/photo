@@ -17,6 +17,7 @@ window.addEventListener('unhandledrejection', e => showError('خطأ: ' + (e.rea
 const DEFAULTS = () => ({
   template: 'landscape',
   logo: null,
+  capfs: 18,   // حجم خط المربع السفلي — مشترك بين الطولي والعرضي
   portrait: {
     photo: null, fit: 'cover', px: 50, py: 50, zoom: 100, fs: 16.5, sfs: 30,
     side_ar: "رحلة النادي\nإلى الكويت والعراق\n1395 هـ",
@@ -28,12 +29,6 @@ const DEFAULTS = () => ({
   },
   landscape: {
     photo: null, fit: 'cover', px: 50, py: 50, zoom: 100, fs: 23, gray: false,
-    ar: "صورة من زيارة صاحب السمو الملكي الأمير / فيصل بن فهد بن عبدالعزيز (رحمه الله) الرئيس العام لرعاية الشباب لمقر النادي الفيصلي بحرمة في حفل أقيم بهذه المناسبة سنة 1396 هـ\nويظهر في الصورة الأستاذ / عبدالله بن ناصر العميم وهدية النادي الى سموه",
-    en: "Photo from the visit of His Royal Highness Prince Faisal bin Fahd bin Abdulaziz (may Allah have mercy on him), General President of Youth Welfare, to the headquarters of Al-Faisaly Club in Harmah, during a ceremony held on this occasion in 1396 AH. The photo shows Mr. Abdullah bin Nasser Al-Omaim and the commemorative gift presented by the club to His Highness.",
-    fr: "Photo de la visite de Son Altesse Royale le Prince Faisal bin Fahd bin Abdulaziz (que Dieu lui fasse miséricorde), Président général du Bien-être de la Jeunesse, au siège du club Al-Faisaly à Harmah, lors d’une cérémonie organisée à cette occasion en 1396 H. La photo montre également M. Abdullah bin Nasser Al-Omaim ainsi que le cadeau commémoratif offert par le club à Son Altesse."
-  },
-  sidepanel: {
-    photo: null, fit: 'cover', px: 50, py: 50, zoom: 100, fs: 27, gray: false,
     ar: "صورة من زيارة صاحب السمو الملكي الأمير / فيصل بن فهد بن عبدالعزيز (رحمه الله) الرئيس العام لرعاية الشباب لمقر النادي الفيصلي بحرمة في حفل أقيم بهذه المناسبة سنة 1396 هـ\nويظهر في الصورة الأستاذ / عبدالله بن ناصر العميم وهدية النادي الى سموه",
     en: "Photo from the visit of His Royal Highness Prince Faisal bin Fahd bin Abdulaziz (may Allah have mercy on him), General President of Youth Welfare, to the headquarters of Al-Faisaly Club in Harmah, during a ceremony held on this occasion in 1396 AH. The photo shows Mr. Abdullah bin Nasser Al-Omaim and the commemorative gift presented by the club to His Highness.",
     fr: "Photo de la visite de Son Altesse Royale le Prince Faisal bin Fahd bin Abdulaziz (que Dieu lui fasse miséricorde), Président général du Bien-être de la Jeunesse, au siège du club Al-Faisaly à Harmah, lors d’une cérémonie organisée à cette occasion en 1396 H. La photo montre également M. Abdullah bin Nasser Al-Omaim ainsi que le cadeau commémoratif offert par le club à Son Altesse."
@@ -58,7 +53,7 @@ const DEFAULTS = () => ({
 function E(year, tar, ten, tfr, dar, den, dfr){ return {year, t_ar:tar, t_en:ten, t_fr:tfr, d_ar:dar, d_en:den, d_fr:dfr, photo:null, px:50, py:50}; }
 
 const KEY = 'faisaly-museum-panels-v1';
-const TEMPLATES = ['portrait','landscape','sidepanel','timeline','wall','wall4'];
+const TEMPLATES = ['portrait','landscape','timeline','wall','wall4'];
 const isObj = o => !!o && typeof o === 'object' && !Array.isArray(o);
 const safeImg = v => (typeof v === 'string' && v.startsWith('data:image/') && !/["<>]/.test(v)) ? v : null;
 const ENUMS = {fit:['cover','contain'], bg:['old','plain']};
@@ -70,12 +65,13 @@ function cleanVal(v, d, k){
 }
 /* يبني حالة سليمة من أي بيانات محفوظة أو ملف مفتوح؛ يرجع null إذا لم تكن مشروعاً */
 function normalize(o){
-  if(!isObj(o) || !['portrait','landscape','sidepanel','timeline'].some(t => isObj(o[t]))) return null;
+  if(!isObj(o) || !['portrait','landscape','timeline'].some(t => isObj(o[t]))) return null;
   if('timeline' in o && !(isObj(o.timeline) && Array.isArray(o.timeline.entries))) return null;
   const out = DEFAULTS();
   if(TEMPLATES.includes(o.template)) out.template = o.template;
   out.logo = safeImg(o.logo);
-  for(const t of ['portrait','landscape','sidepanel','timeline']){
+  out.capfs = cleanVal(o.capfs, out.capfs, 'capfs');
+  for(const t of ['portrait','landscape','timeline']){
     if(!isObj(o[t])) continue;
     for(const k in out[t]) if(k !== 'entries') out[t][k] = cleanVal(o[t][k], out[t][k], k);
   }
@@ -241,15 +237,15 @@ function textBlock(t){
     <button class="btn pri" style="width:100%;margin-top:8px" data-trside>🌐 ترجم إلى الإنجليزية والفرنسية</button>
     ${ta(t+'.side_en','English','ltr',4)}
     ${ta(t+'.side_fr','Français','ltr',4)}
-    ${rg(t+'.sfs','حجم خط العمود',14,60,.5)}
-    <div class="hint">مناسب للعنوان أو التاريخ أو المناسبة. يصغر الخط تلقائياً إذا طال النص.</div>
+
+    <div class="hint">مناسب للعنوان أو التاريخ أو المناسبة. حجم خطه نفس حجم المربع السفلي.</div>
   </fieldset>`;
   return side + `<fieldset><legend>${t==='portrait'?'نصوص الصندوق السفلي':'النصوص'}</legend>
     ${ta(t+'.ar','النص العربي','rtl',6)}
     <button class="btn pri" style="width:100%;margin-top:8px" data-tr="${t}">🌐 ترجم إلى الإنجليزية والفرنسية</button>
     ${ta(t+'.en','English','ltr',6)}
     ${ta(t+'.fr','Français','ltr',6)}
-    ${rg(t+'.fs','حجم الخط',12,40,.5)}
+    ${rg('capfs','حجم الخط (نفس الحجم في الطولي والعرضي)',12,40,.5)}
     <div class="hint">الترجمة آلية — يمكنك تعديلها مباشرة.</div>
   </fieldset>`;
 }
@@ -262,7 +258,6 @@ function buildSide(){
     <button data-tpl="timeline" class="${t==='timeline'?'on':''}">⟿ خط زمني</button>
     <button data-tpl="wall" class="${t==='wall'?'on':''}">▦ جداري</button>
     <button data-tpl="wall4" class="${t==='wall4'?'on':''}">▤ OPTION 4</button>
-    <button data-tpl="sidepanel" class="${t==='sidepanel'?'on':''}">◧ جانبي</button>
   </div>`;
   if(!isTL(t)){ h += photoBlock(t) + textBlock(t); }
   else{
@@ -315,7 +310,7 @@ function photoHTML(P, cls=''){
 }
 const logoSrc = () => S.logo || LOGO;
 
-const SIZES = {portrait:[1200,1800], landscape:[2100,1500], timeline:[3200,1800], wall:WALL_SIZE, wall4:[2520,2610], sidepanel:[1920,1600]};
+const SIZES = {portrait:[1200,1800], landscape:[2100,1500], timeline:[3200,1800], wall:WALL_SIZE, wall4:[2520,2610]};
 const isTL = t => t==='timeline' || t==='wall' || t==='wall4';   // التصميمان يستخدمان نفس بيانات المحطات
 
 function render(){
@@ -323,9 +318,9 @@ function render(){
   let h = '';
   if(t==='portrait'){
     const P = S.portrait;
-    h = `<div class="d portrait" style="--fs:${P.fs}px">
+    h = `<div class="d portrait" style="--fs:${S.capfs}px">
       <div class="top">
-        <div class="card side fit" data-var="--sfs" data-max="${P.sfs}" style="--sfs:${P.sfs}px">
+        <div class="card side fit" data-growx="480" data-max="${S.capfs}" style="--fs:${S.capfs}px">
           <div class="t ar">${txt(P.side_ar)}</div>
           <div class="hr"></div><div class="t">${txt(P.side_en)}</div>
           <div class="hr"></div><div class="t"><i>${txt(P.side_fr)}</i></div>
@@ -340,7 +335,7 @@ function render(){
       </div></div>`;
   } else if(t==='landscape'){
     const P = S.landscape;
-    h = `<div class="d landscape" style="--fs:${P.fs}px">
+    h = `<div class="d landscape" style="--fs:${S.capfs}px">
       ${photoHTML(P,'card')}
       <div class="card cap">
         <div style="display:flex;justify-content:center"><img class="logo" src="${logoSrc()}"></div>
@@ -349,37 +344,32 @@ function render(){
         <div class="col ar"><div class="t ar">${txt(P.ar)}</div></div>
       </div>
     </div>`;
-  } else if(t==='sidepanel'){
-    // مثل العينة: عمود جانبي (شعار + عربي + إنجليزي + فرنسي) والصورة على اليمين
-    const P = S.sidepanel;
-    h = `<div class="d sidepanel">
-      <div class="card side fit" style="--fs:${P.fs}px" data-max="${P.fs}">
-        <img class="logo" src="${logoSrc()}">
-        <div class="hr"></div><div class="t ar">${txt(P.ar)}</div>
-        <div class="hr"></div><div class="t">${txt(P.en)}</div>
-        <div class="hr"></div><div class="t">${txt(P.fr)}</div>
-      </div>
-      ${photoHTML(P,'card')}
-    </div>`;
   } else if(t==='wall'){
     h = renderWall();
   } else if(t==='wall4'){
     h = renderWall4();
   } else {
     const T = S.timeline, [W,H] = SIZES.timeline, n = Math.max(T.entries.length,1);
-    const x0 = 150, avail = W - x0 - 420, slot = avail/n, cw = Math.min(slot - 76, 440), phH = 190;
-    // staircase: upper stations rise, lower stations rise gently
-    const pts = T.entries.map((e,i)=>{
-      const up = i%2===0, k = Math.floor(i/2), steps = Math.max(Math.ceil(n/2)-1,1);
-      const y = up ? 800 - k*(300/steps) : 1060 - k*(80/steps);
-      return {x: x0 + i*slot, y, up};
-    });
+    // خط شبه مستقيم بدرجات صغيرة، والمحطات تتناوب تحت الخط وفوقه بنفس المقاس
+    const x0 = 170, phH = 200, gapPh = 18, txtH = 330, cardH = phH + gapPh + txtH;
+    const slot = n > 1 ? Math.min((W - 80 - 340 - 520 - x0) / (n - 1), 700) : 0;
+    const cw = n > 1 ? Math.min(2*slot - 60, 520) : 520;
+    // درجات واضحة: أكبر ارتفاع يسمح به المكان (حتى 60) مع بقاء المحطات العليا والسفلى داخل اللوحة
+    // الدرجة تصعد قبل المحطة مباشرة؛ النص العلوي يعلو كل درجة تقع تحته (kUp) فيبقى بنفس البعد عن الخط
+    const stepX = j => x0 + j*slot - 30;
+    let kUp = 0;
+    for(let i=1;i<n;i+=2){ let k = 0; for(let j=i+1;j<n;j++) if(stepX(j) <= x0 + i*slot + 22 + cw + 10) k++; kUp = Math.max(kUp, k); }
+    const rise = n > 1 ? Math.min(60, (H - 160 - 2*cardH - 90) / (n - 1 + kUp)) : 0;
+    const upGap = 40 + kUp*rise;          // بعد النص العلوي عن نقطة محطته
+    const yBase = H - 80 - 50 - cardH;
+    const pts = T.entries.map((e,i)=>({x: x0 + i*slot, y: yBase - i*rise, up: i%2===1}));
     const y0 = pts.length ? pts[0].y : 1000;
-    const last = pts[pts.length-1] || {x:x0,y:1000}, xe = x0 + n*slot, ye = 1200;
-    const P = [[x0-90, y0]];
-    pts.forEach((p,i)=>{ if(i===0){ P.push([p.x,p.y]); return; } const cx = p.x - 26; P.push([cx, pts[i-1].y],[cx, p.y],[p.x, p.y]); });
-    P.push([xe-26, last.y],[xe-26, ye],[xe+230, ye]);
-    const r = 22; let d = `M${P[0][0]},${P[0][1]}`;
+    const last = pts[pts.length-1] || {x:x0, y:1000};
+    const xe = Math.min(last.x + cw + 60, W - 380), ye = last.y;
+    const P = [[x0-110, y0]];
+    pts.forEach((p,i)=>{ if(i===0){ P.push([p.x,p.y]); return; } const mx = stepX(i); P.push([mx, pts[i-1].y],[mx, p.y],[p.x, p.y]); });
+    P.push([xe + 250, ye]);
+    const r = 0; let d = `M${P[0][0]},${P[0][1]}`;   // خط مستقيم بزوايا حادة
     for(let i=1;i<P.length;i++){
       const [x,y] = P[i], nx = P[i+1];
       if(!nx){ d += ` L${x},${y}`; break; }
@@ -408,31 +398,26 @@ function render(){
     </svg><div class="frame"></div>`;
     h = `<div class="d timeline ${T.bg==='plain'?'plain':''}" style="--fs:${T.fs}px">
       ${paper}
-      <div class="hd"><img class="logo" src="${logoSrc()}">
-        <div class="n-ar">${esc(T.name_ar)}</div><div class="n-en">${esc(T.name_en)}</div>
-        <div class="sl-ar">${esc(T.sl_ar)}</div><div class="sl">${esc(T.sl_en)}</div><div class="sl fr">${esc(T.sl_fr)}</div>
-      </div>
+      <div class="hd"><img class="logo" src="${logoSrc()}"></div>
       <svg class="path" width="${W}" height="${H}">
         <path d="${d}" fill="none" stroke="#7a1c1c" stroke-width="6" stroke-linecap="round"/>
         <circle cx="${x0-90}" cy="${y0}" r="9" fill="#7a1c1c"/>
+        ${pts.map(p=>`<line x1="${p.x}" y1="${p.y}" x2="${p.x}" y2="${p.up ? p.y-upGap : p.y+50}" stroke="#7a1c1c" stroke-width="3"/>`).join('')}
         ${pts.map(p=>`<circle cx="${p.x}" cy="${p.y}" r="17" fill="#7a1c1c" stroke="#efe2c8" stroke-width="6"/>`).join('')}
-        <path d="M${xe+222},${ye-18} L${xe+256},${ye} L${xe+222},${ye+18} Z" fill="#7a1c1c"/>
+        <path d="M${xe+244},${ye-18} L${xe+278},${ye} L${xe+244},${ye+18} Z" fill="#7a1c1c"/>
       </svg>
-      <div class="end" style="left:${xe}px;top:${ye+40}px;width:${W-xe-80}px">
+      <div class="end" style="left:${xe}px;top:${ye+44}px;width:${W-xe-80}px">
         <div class="e-ar">${esc(T.end_ar)}</div><div class="e-en">${esc(T.end_en)}</div><div class="e-fr">${esc(T.end_fr)}</div>
         <div style="width:120px;height:4px;background:#7a1c1c;margin-top:16px"></div>
       </div>`;
     T.entries.forEach((e,i)=>{
-      const p = pts[i], left = p.x + 30;
-      const txtTop = p.y + 26;
-      const below = !p.up || i===0;   // first station keeps its photo under the text (header is above it)
-      const lowLimit = below ? H - 70 - (phH + 24) : Math.min(txtTop + 470, H - 70);
+      const p = pts[i], left = p.x + 22;
+      // فوق الخط: الصورة في الأعلى والنص قرب الخط — تحت الخط: النص قرب الخط والصورة في الأسفل
+      const top = p.up ? p.y - upGap - cardH : p.y + 50;
+      const phTop = p.up ? top : top + txtH + gapPh, txtTop = p.up ? top + phH + gapPh : top;
       const img = e.photo ? `<img src="${e.photo}" style="object-fit:cover;object-position:${e.px}% ${e.py}%">` : `<div class="ph-empty-in">＋ أضف صورة<small>${esc(e.year)}</small></div>`;
-      {
-        const top = below ? lowLimit + 20 : p.y - 34 - phH;
-        h += `<div class="tph ${T.sepia?'old':''} ${e.photo?'':'ph-empty'}" data-entry="${i}" style="left:${left}px;top:${top}px;width:${cw}px;height:${phH}px">${img}</div>`;
-      }
-      h += `<div class="tc fit" data-group="tl" data-max="${T.fs}" style="left:${left}px;top:${txtTop}px;width:${cw}px;height:${lowLimit-txtTop}px;--fs:${T.fs}px">
+      h += `<div class="tph ${T.sepia?'old':''} ${e.photo?'':'ph-empty'}" data-entry="${i}" style="left:${left}px;top:${phTop}px;width:${cw}px;height:${phH}px">${img}</div>`;
+      h += `<div class="tc fit ${p.up?'up':''}" data-group="tl" data-max="${T.fs}" style="left:${left}px;top:${txtTop}px;width:${cw}px;height:${txtH}px;--fs:${T.fs}px">
           <div class="yr">${esc(e.year)}</div>
           <div class="ti-ar">${esc(e.t_ar)}</div><div class="ti-en">${esc(e.t_en)}</div><div class="ti-fr">${esc(e.t_fr)}</div>
           <div class="t ar">${txt(e.d_ar)}</div><div class="t">${txt(e.d_en)}</div><div class="t"><i>${txt(e.d_fr)}</i></div>
@@ -461,18 +446,25 @@ function autoFit(){
     const v = f.dataset.var || '--fs';
     let fs = parseFloat(f.dataset.max);
     f.style.setProperty(v, fs+'px');
-    while(f.scrollHeight > f.clientHeight+1 && fs > 9){ fs -= .5; f.style.setProperty(v, fs+'px'); }
+    // يتسع الصندوق أولاً (حتى data-growx) ليبقى الخط بحجمه، ثم يصغر الخط إن لزم
+    if(f.dataset.growx){
+      f.style.width = '';
+      let w = f.offsetWidth;
+      while(w < +f.dataset.growx && (f.scrollHeight > f.clientHeight+1 || f.scrollWidth > f.clientWidth+1)){ w += 10; f.style.width = w+'px'; }
+    }
+    while((f.scrollHeight > f.clientHeight+1 || f.scrollWidth > f.clientWidth+1) && fs > 9){ fs -= .5; f.style.setProperty(v, fs+'px'); }
     if(f.dataset.group) (groups[f.dataset.group] = groups[f.dataset.group] || []).push({f, v, fs});
   });
   // نفس حجم الخط لكل المجموعة، لكن نص طويل واحد لا يصغّر الباقي تحت 75%
   for(const g in groups){
-    const floor = parseFloat(groups[g][0].f.dataset.max) * .75;
+    const first = groups[g][0].f;
+    const floor = first.dataset.strict !== undefined ? 0 : parseFloat(first.dataset.max) * .75;
     const base = Math.max(Math.min(...groups[g].map(x=>x.fs)), floor);
     groups[g].forEach(x=>x.f.style.setProperty(x.v, Math.min(x.fs, base)+'px'));
   }
   fitHeaders();
   if(!document.getElementById('stage').clientWidth) return;   // المعاينة مخفية: تُفحص عند ظهورها
-  const over = boxes.filter(f => f.scrollHeight > f.clientHeight+1).length;
+  const over = boxes.filter(f => f.scrollHeight > f.clientHeight+1 || f.scrollWidth > f.clientWidth+1).length;
   if(over && !fitOverflow) toast('نص طويل لا يتسع في إطاره وسيُقص — اختصره قبل الطباعة');
   fitOverflow = over;
 }
@@ -574,7 +566,7 @@ document.getElementById('exp').addEventListener('click', async e=>{
       fmt === 'jpg' ? 'image/jpeg' : 'image/png', 0.95));
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    const name = {portrait:'لوحة-طولية', landscape:'لوحة-عرضية', timeline:'خط-زمني', wall:'تصميم-جداري', wall4:'جداري-option4', sidepanel:'لوحة-جانبية'}[S.template];
+    const name = {portrait:'لوحة-طولية', landscape:'لوحة-عرضية', timeline:'خط-زمني', wall:'تصميم-جداري', wall4:'جداري-option4'}[S.template];
     a.download = `${name}-${new Date().toISOString().slice(0,16).replace(/[T:]/g,'-')}.${fmt}`; a.href = url;
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(()=>URL.revokeObjectURL(url), 60000);

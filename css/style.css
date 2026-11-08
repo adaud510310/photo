@@ -48,21 +48,25 @@ input[type=range]{width:100%;accent-color:var(--m)}
 .portrait{width:1200px;height:1800px;background:#fff;padding:46px;display:flex;flex-direction:column;gap:40px}
 .portrait .top{flex:1;display:flex;gap:30px;min-height:0}
 .portrait .ph{flex:1}
-.portrait .side{width:310px;flex:none;padding:30px 22px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:20px}
+.portrait .side{width:120px;flex:none;padding:16px 8px;display:flex;flex-direction:column;justify-content:safe center;align-items:center;text-align:center;gap:14px}   /* 10% من عرض اللوحة */
 .portrait .side .hr{width:60%;height:4px;background:var(--m);flex:none}
-.portrait .side .t{font-size:var(--sfs)}
-.portrait .side .t.ar{font-size:calc(var(--sfs)*1.12);font-weight:800}
-.portrait .cap{display:grid;grid-template-columns:240px 1fr 1fr 1fr;align-items:center;padding:30px 30px 30px 22px;min-height:280px}
-.portrait .cap .col{border-left:4px solid var(--m);padding:0 26px;align-self:stretch;display:flex;align-items:center}
+.portrait .side .t{font-size:var(--fs);overflow-wrap:break-word}   /* نفس حجم المربع السفلي */
+.portrait .side .t.ar{font-size:calc(var(--fs)*1.08);font-weight:800}
+.portrait .cap{display:grid;grid-template-columns:auto 1fr 1fr 1fr;align-items:center;padding:12px 24px 12px 18px;min-height:180px;flex:none}   /* 10% من ارتفاع اللوحة، ويكبر إذا طال النص */
+.portrait .cap .col{border-left:4px solid var(--m);padding:0 20px;align-self:stretch;display:flex;align-items:center}
 .portrait .cap .col.ar{text-align:right}
 .portrait img.logo{width:210px;height:210px}
+.portrait .cap img.logo{width:142px;height:142px;margin-right:18px}
 
 .landscape{width:2100px;height:1500px;background:#fff;padding:46px;display:flex;flex-direction:column;gap:36px}
 .landscape .ph{flex:1}
-.landscape .cap{display:grid;grid-template-columns:250px 1fr 1fr 1fr;align-items:center;padding:30px 40px 30px 22px;min-height:260px;flex:none}
-.landscape .cap .col{border-left:4px solid var(--m);padding:0 34px;align-self:stretch;display:flex;align-items:center}
+.landscape .cap{display:grid;grid-template-columns:auto 1fr 1fr 1fr;align-items:center;padding:12px 30px 12px 18px;min-height:150px;flex:none}   /* 10% من ارتفاع اللوحة، ويكبر إذا طال النص */
+.landscape .cap .col{border-left:4px solid var(--m);padding:0 28px;align-self:stretch;display:flex;align-items:center}
 .landscape .cap .col.ar{text-align:right}
 .landscape img.logo{width:215px;height:215px}
+.landscape .cap img.logo{width:112px;height:112px;margin-right:18px}
+.portrait .cap .t,.landscape .cap .t{line-height:1.32}
+.portrait .cap .t.ar,.landscape .cap .t.ar{line-height:1.42}
 
 .timeline{width:3200px;height:1800px;background:#e8d8b9;color:#7a1c1c}
 .timeline.plain{background:#efe6d6}
@@ -120,14 +124,6 @@ input[type=range]{width:100%;accent-color:var(--m)}
 .timeline .ph-empty-in{font-size:28px}
 .d .tph,.d .wph{cursor:pointer}
 
-/* ===== التصميم الجانبي (مثل العينة) ===== */
-.sidepanel{width:1920px;height:1600px;background:#fff;padding:50px;display:flex;gap:44px}
-.sidepanel .side{width:640px;flex:none;padding:46px 44px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:26px}
-.sidepanel .side .hr{width:78%;height:4px;background:var(--m);flex:none}
-.sidepanel .side .t.ar{text-align:center}
-.sidepanel img.logo{width:300px;height:300px;flex:none}
-.sidepanel .ph{flex:1}
-
 /* ===== التصميم الجداري المطابق (wall4 — OPTION 4) ===== */
 .wall4{background:#d6c1a3;color:#7a1f2b}
 .wall4 .w4svg{position:absolute;left:0;top:0;display:block}
@@ -155,6 +151,8 @@ input[type=range]{width:100%;accent-color:var(--m)}
 .whd{--u:84px;left:120px;top:110px;width:860px}
 .w4hd{--u:60px;color:#6f1622}
 .timeline img.logo{width:230px;height:230px}
+.timeline .hd{width:auto}   /* الشعار وحده في الزاوية */
+.timeline .tc.up{justify-content:flex-end}   /* نص المحطات العلوية يلاصق الخط مثل السفلية */
 .wall img.logo{width:320px;height:320px}
 .wall4 img.logo{width:396px;height:396px;filter:saturate(.8) brightness(.82)}
 .hd>img.logo,.whd>img.logo,.w4hd>img.logo{margin-bottom:calc(var(--u)*.6)}
