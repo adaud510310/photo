@@ -17,6 +17,7 @@ window.addEventListener('unhandledrejection', e => showError('خطأ: ' + (e.rea
 const DEFAULTS = () => ({
   template: 'landscape',
   logo: null,
+  libLink: {},    // اللوحة المفتوحة من المكتبة لكل نوع: {portrait: id, ...}
   capfs: 18,
   wlogo: false,   // الشعار باللون الأبيض (كل اللوحات ما عدا المتحف، ولها إعدادها)
   yr: 0,      // المحطة المعروضة في لوحات السنوات   // حجم خط المربع السفلي — مشترك بين الطولي والعرضي
@@ -81,6 +82,7 @@ function normalize(o){
   out.logo = safeImg(o.logo);
   out.capfs = cleanVal(o.capfs, out.capfs, 'capfs');
   out.wlogo = o.wlogo === true;
+  if(isObj(o.libLink)) for(const g of ['portrait','landscape','museum','timeline']) if(typeof o.libLink[g] === 'string') out.libLink[g] = o.libLink[g];
   out.yr = Number.isInteger(o.yr) && o.yr >= 0 ? o.yr : 0;
   for(const t of ['portrait','landscape','timeline','museum']){
     if(!isObj(o[t])) continue;
@@ -124,10 +126,10 @@ let saveT;
 function save(){
   clearTimeout(saveT);
   saveT = setTimeout(async ()=>{
-    try{ await idbSet(S); try{ localStorage.removeItem(KEY); }catch(e){} }
+    try{ await idbSet(S); try{ localStorage.removeItem(KEY); }catch(e){} libSyncNow(); }
     catch(e){
       try{ localStorage.setItem(KEY, JSON.stringify(S)); }
-      catch(e2){ showError('تعذّر الحفظ التلقائي — آخر تعديلاتك غير محفوظة، استخدم "حفظ المشروع"'); }
+      catch(e2){ showError('تعذّر الحفظ التلقائي — آخر تعديلاتك غير محفوظة، استخدم "💾 حفظ الكل"'); }
     }
   }, 400);
 }
@@ -301,7 +303,9 @@ function textBlock(t){
 }
 function buildSide(){
   const t = S.template;
+  libRelink();
   let h = `<h1>صانع لوحات المتحف</h1><div class="sub">النادي الفيصلي السعودي — صورة + نص عربي + ترجمة إنجليزي وفرنسي</div>
+  ${libStatusHTML()}
   <div class="tabs">
     <button data-tpl="portrait" class="${t==='portrait'?'on':''}">▯ طولي</button>
     <button data-tpl="landscape" class="${t==='landscape'?'on':''}">▭ عرضي</button>
@@ -597,6 +601,8 @@ side.addEventListener('click', e=>{
   if(d.tpl){ S.template = d.tpl; buildSide(); render(); save(); }
   else if(d.yr !== undefined){ S.yr = +d.yr; buildSide(); render(); save(); }
   else if(d.expall !== undefined){ exportAll(b); }
+  else if(d.lib !== undefined){ libOpenDlg(); }
+  else if(d.libsave !== undefined){ libSaveCurrent(); }
   else if(d.pick){ pick(d.pick); }
   else if(d.center){ setP(S, d.center+'.px', 50); setP(S, d.center+'.py', 50); buildSide(); render(); save(); }
   else if(d.clear){ setP(S, d.clear, null); buildSide(); render(); save(); }
@@ -694,16 +700,59 @@ function downloadJSON(data, name){
   setTimeout(()=>URL.revokeObjectURL(a.href), 60000);
 }
 const refresh = () => { buildSide(); render(); save(); };
-document.getElementById('saveProj').onclick = ()=> downloadJSON(S, `مشروع-لوحات-${new Date().toISOString().slice(0,10)}.json`);
+/* الصور في ملف «حفظ الكل»: كل صورة تُكتب مرة واحدة في جدول images، وفي مكانها مرجع "@img:رقم"
+   (نفس الصورة موجودة في المحرر وفي المكتبة — بدون هذا يتضاعف حجم الملف) */
+function packImages(o){
+  const images = {}, ids = new Map();
+  const packed = JSON.parse(JSON.stringify(o, (k, v) => {
+    if(typeof v !== 'string' || !v.startsWith('data:image/')) return v;
+    if(!ids.has(v)){ const id = 'i' + ids.size; ids.set(v, id); images[id] = v; }
+    return '@img:' + ids.get(v);
+  }));
+  return {...packed, images};
+}
+function unpackImages(o){
+  if(!isObj(o) || !isObj(o.images)) return o;   // ملفات قديمة بدون جدول صور
+  const T = o.images;
+  const walk = v => typeof v === 'string' ? (v.startsWith('@img:') ? (typeof T[v.slice(5)] === 'string' ? T[v.slice(5)] : null) : v)
+    : Array.isArray(v) ? v.map(walk) : isObj(v) ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, walk(x)])) : v;
+  const {images, ...rest} = o;
+  return walk(rest);
+}
+/* حفظ الكل: الحالة الحالية + كل لوحات المكتبة بصورها ونصوصها في ملف واحد */
+document.getElementById('saveProj').onclick = async e=>{
+  const b = e.currentTarget, old = b.textContent; b.disabled = true; b.textContent = '... جاري الحفظ';
+  try{
+    await libSafeguard(['portrait','landscape','museum','timeline']);   // ما لم يُحفظ بعد يدخل المكتبة أولاً
+    save(); libUpdateCount(); buildSide();
+    const library = await libExportAll();
+    downloadJSON(packImages({...S, library}), `كل-لوحات-النادي-${new Date().toISOString().slice(0,10)}.json`);
+    toast(`تم حفظ ${library.length} لوحة بصورها ونصوصها في ملف واحد ✔`);
+  }catch(err){ console.error(err); showError('تعذّر الحفظ: '+(err && err.message || err)); }
+  b.disabled = false; b.textContent = old;
+};
 document.getElementById('openProj').onclick = ()=> document.getElementById('projFile').click();
 document.getElementById('projFile').addEventListener('change', async e=>{
   const f = e.target.files[0]; if(!f) return;
   e.target.value = '';
-  let next = null;
-  try{ next = normalize(JSON.parse(await f.text())); }catch(err){}
+  let raw = null, next = null;
+  try{ raw = unpackImages(JSON.parse(await f.text())); next = normalize(raw); }catch(err){}
   if(!next){ toast('هذا الملف ليس مشروع لوحات — لم يتغير عملك'); return; }
+  await libSyncNow();
+  await libSafeguard(['portrait','landscape','museum','timeline']);   // لا يضيع عمل غير محفوظ
+  const r = await libImport(raw.library);
+  // لوحة نسختها في المكتبة أحدث من الملف: نعرض النسخة الأحدث في المحرر ونبقيها مرتبطة،
+  // بدل نسخة الملف القديمة (التي كانت تُحفظ لاحقاً كلوحة مكررة)
+  for(const g in next.libLink){
+    const id = next.libLink[g];
+    if(!r.kept.has(id)) continue;
+    let d = null; try{ d = await libGetData(id); }catch(err){}
+    const m = isObj(d) ? normalize({...next, ...d, template: next.template, libLink: next.libLink}) : null;
+    if(m) next = m; else delete next.libLink[g];
+  }
   snapshot(); S = next; refresh();
-  toast('تم فتح المشروع — يمكنك التراجع بزر "تراجع"');
+  const parts = [r.added && `أُضيفت ${r.added}`, r.updated && `حُدّثت ${r.updated}`, r.kept.size && `بقيت ${r.kept.size} لأن نسختك أحدث`].filter(Boolean);
+  toast('تم فتح الملف' + (parts.length ? ' — لوحات المكتبة: ' + parts.join('، ') : '') + ' — يمكنك التراجع بزر "تراجع"');
 });
 document.getElementById('undo').onclick = ()=>{
   if(!undoS) return;
@@ -711,12 +760,16 @@ document.getElementById('undo').onclick = ()=>{
   document.getElementById('undo').hidden = true;
   refresh(); toast('تم التراجع');
 };
-document.getElementById('clearCur').onclick = ()=>{
+document.getElementById('clearCur').onclick = async ()=>{
   const t = S.template;
   const msg = isTL(t)
     ? 'تفريغ كل المحطات وصورها؟\nالمحطات مشتركة، فسيشمل ذلك: خط زمني، لوحات السنوات.'
     : 'تفريغ اللوحة الحالية (الصورة والنصوص)؟';
   if(!confirm(msg)) return;
+  const g = libGroup(t);
+  await libSyncNow();
+  const wasLinked = !!S.libLink[g], kept = wasLinked ? null : (await libSafeguard([g]))[0];
+  delete S.libLink[g];   // اللوحة الجديدة لا تكتب فوق المحفوظة
   snapshot();
   if(isTL(t)) S.timeline.entries = S.timeline.entries.map(()=>E('','','','','','',''));
   else if(t==='museum') Object.assign(S.museum, {photo:null, t_ar:'', d_ar:'', t_en:'', d_en:'', px:50, py:50, zoom:100});
@@ -724,8 +777,8 @@ document.getElementById('clearCur').onclick = ()=>{
     Object.assign(S[t], {photo:null, ar:'', en:'', fr:'', px:50, py:50, zoom:100, fit:'cover', gray:false});
     if(t==='portrait') Object.assign(S[t], {side_ar:'', side_en:'', side_fr:''});
   }
-  refresh();
-  toast('تم التفريغ — يمكنك التراجع بزر "تراجع"');
+  refresh(); libUpdateCount();
+  toast('تم التفريغ' + (kept ? ` — حُفظت السابقة في المكتبة باسم «${kept.name}»` : wasLinked ? ' — اللوحة السابقة باقية في المكتبة' : '') + '، ويمكنك التراجع بزر "تراجع"');
 };
 
 /* ---------- Init ---------- */
@@ -736,6 +789,7 @@ document.getElementById('clearCur').onclick = ()=>{
   try{ saved = normalize(await idbGet()); }catch(e){}
   if(saved) S = saved;
   else if(localStorage.getItem(KEY)) save();     // نقل الحفظ القديم إلى IndexedDB
+  await libLoad();
   const ht = location.hash.slice(1); if(Object.hasOwn(SIZES, ht)) S.template = ht;
   try{ buildSide(); render(); }
   catch(err){
