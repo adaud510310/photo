@@ -62,7 +62,7 @@ const DEFAULTS = () => ({
 function E(year, tar, ten, tfr, dar, den, dfr){ return {year, t_ar:tar, t_en:ten, t_fr:tfr, d_ar:dar, d_en:den, d_fr:dfr, c_ar:'', c_en:'', c_fr:'', date:'', hy:'', photo:null, ar:0, px:50, py:50, zoom:100, toff:0, poff:0}; }   // c_ = وصف الصورة (لوحات السنوات)
 
 const KEY = 'faisaly-museum-panels-v1';
-const TEMPLATES = ['portrait','landscape','timeline','museum','years','yearsw'];
+const TEMPLATES = ['portrait','landscape','timeline','museum','years','yearsw','years68'];
 const isObj = o => !!o && typeof o === 'object' && !Array.isArray(o);
 const safeImg = v => (typeof v === 'string' && v.startsWith('data:image/') && !/["<>]/.test(v)) ? v : null;
 const ENUMS = {fit:['cover','contain'], bg:['old','plain']};
@@ -208,7 +208,7 @@ async function translate(text, tl){
 }
 async function doTranslate(btn, pairs){
   // لوحات السنوات بالعربي والإنجليزي فقط: لا داعي لطلب الفرنسية
-  if(['years','yearsw','museum'].includes(S.template)) pairs = pairs.filter(p => p[2] !== 'fr');
+  if(['years','yearsw','years68','museum'].includes(S.template)) pairs = pairs.filter(p => p[2] !== 'fr');
   // الهدف كائن وليس رقماً: تبقى الترجمة مع محطتها إذا نُقلت أثناء الانتظار
   const jobs = pairs.map(([src, dst, tl]) => {
     const ks = dst.split('.'), key = ks.pop();
@@ -309,11 +309,12 @@ function buildSide(){
     <button data-tpl="museum" class="${t==='museum'?'on':''}">🏛 لوحة المتحف</button>
     <button data-tpl="years" class="${t==='years'?'on':''}">▣ لوحة لكل سنة</button>
     <button data-tpl="yearsw" class="${t==='yearsw'?'on':''}">▬ لوحة لكل سنة (عرضي)</button>
+    <button data-tpl="years68" class="${t==='years68'?'on':''}">▯ لوحة لكل سنة 60×80</button>
   </div>`;
   if(t==='museum'){ h += museumSide(); }
   else if(!isTL(t)){ h += photoBlock(t) + textBlock(t); }
   else{
-    const T = S.timeline, Y = t==='years' || t==='yearsw';
+    const T = S.timeline, Y = isYears(t);
     if(Y) h += `<fieldset><legend>اللوحات (${T.entries.length})</legend>
       <div class="hint" style="margin-top:0">لوحة مستقلة لكل سنة. اختر السنة لعرض لوحتها وتعديلها:</div>
       <div class="yrchips">${T.entries.map((e,i)=>`<button class="btn sm ${i===Math.min(S.yr,T.entries.length-1)?'pri':''}" data-yr="${i}">${esc(e.year)||('محطة '+(i+1))}</button>`).join('')}</div>
@@ -382,8 +383,8 @@ function photoHTML(P, cls=''){
 }
 const logoSrc = () => S.logo || LOGO;
 
-const SIZES = {portrait:[1200,1700], landscape:[2100,1500], timeline:[3200,1800], museum:MUSEUM_SIZE, years:YEARS_SIZE, yearsw:YEARS_W_SIZE};
-const isTL = t => t==='timeline' || t==='years' || t==='yearsw';   // التصميمان يستخدمان نفس بيانات المحطات
+const SIZES = {portrait:[1200,1700], landscape:[2100,1500], timeline:[3200,1800], museum:MUSEUM_SIZE, years:YEARS_SIZE, yearsw:YEARS_W_SIZE, years68:YEARS_M_SIZE};
+const isTL = t => t==='timeline' || isYears(t);   // التصميمان يستخدمان نفس بيانات المحطات
 
 function render(){
   const t = S.template, el = document.getElementById('design');
@@ -411,8 +412,8 @@ function render(){
     </div>`;
   } else if(t==='museum'){
     h = renderMuseum();
-  } else if(t==='years' || t==='yearsw'){
-    h = renderYears(t==='yearsw');
+  } else if(isYears(t)){
+    h = renderYears(t);
   } else {
     const T = S.timeline, [W,H] = SIZES.timeline, n = Math.max(T.entries.length,1);
     // خط شبه مستقيم بدرجات صغيرة، والمحطات تتناوب تحت الخط وفوقه بنفس المقاس
@@ -647,8 +648,8 @@ async function exportCurrent(){
   canvas.width = canvas.height = 0;   // تحرير الذاكرة
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  let name = {portrait:'لوحة-طولية', landscape:'لوحة-عرضية', timeline:'خط-زمني', museum:'لوحة-المتحف', years:'لوحة-سنة', yearsw:'لوحة-سنة-عرضي'}[S.template];
-  if(S.template==='years' || S.template==='yearsw'){
+  let name = {portrait:'لوحة-طولية', landscape:'لوحة-عرضية', timeline:'خط-زمني', museum:'لوحة-المتحف', years:'لوحة-سنة', yearsw:'لوحة-سنة-عرضي', years68:'لوحة-سنة-60x80'}[S.template];
+  if(isYears(S.template)){
     const i = Math.min(S.yr, S.timeline.entries.length-1), y = String(S.timeline.entries[i]?.year || '').replace(/[\\/:*?"<>|\s]+/g,'-');
     name += `-${String(i+1).padStart(2,'0')}${y?'-'+y:''}`;
   }

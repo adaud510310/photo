@@ -5,7 +5,7 @@
    تستخدم نفس بيانات الخط الزمني (S.timeline).
    ============================================================ */
 
-const YEARS_SIZE = [1400, 1800], YEARS_W_SIZE = [1800, 1400];   // طولي 70×90 سم / عرضي 90×70 سم
+const YEARS_SIZE = [1400, 1800], YEARS_W_SIZE = [1800, 1400], YEARS_M_SIZE = [1350, 1800];   // + طولي 60×80 سم   // طولي 70×90 سم / عرضي 90×70 سم
 
 /* خلفية ورق قديم (SVG) */
 function wallPaper(W, H){
@@ -51,7 +51,11 @@ const YL = {
           box:{x:150, y:295, w:1500, h:695}, tx:{y:1064, h:168, l:110, r:1690}, sy:1268 },
   tall: { logo:{x:70, y:60, s:170}, yr:{y:110, fs:44}, ti:{x:270, w:860, y:180, h:110, ts:40},
           box:{x:100, y:320, w:1200, h:960}, tx:{y:1342, h:262, l:100, r:1300}, sy:1660 },
+  // طولي 60×80 سم: نفس مواصفات الطولي وارتفاعه، أضيق فقط
+  mid:  { logo:{x:70, y:60, s:170}, yr:{y:110, fs:44}, ti:{x:270, w:810, y:180, h:110, ts:40},
+          box:{x:75, y:320, w:1200, h:960}, tx:{y:1342, h:262, l:90, r:1260}, sy:1660 },
 };
+const isYears = t => t === 'years' || t === 'yearsw' || t === 'years68';
 
 /* السنة الهجرية: المكتوبة في المحطة، وإلا تُحسب تقريبياً من الميلادية */
 function hijriYear(e){
@@ -85,16 +89,17 @@ function yearsLogo(){
     }
     x.putImageData(d, 0, 0);
     yLogo.out = c.toDataURL('image/png');
-    if(S.template === 'years' || S.template === 'yearsw') render();
+    if(isYears(S.template)) render();
   };
   im.src = src;
   return src;
 }
 
-function renderYears(wide = false){
-  const T = S.timeline, [W, H] = wide ? YEARS_W_SIZE : YEARS_SIZE, ents = T.entries, n = ents.length;
+function renderYears(tpl = 'years'){
+  const wide = tpl === 'yearsw';
+  const T = S.timeline, [W, H] = wide ? YEARS_W_SIZE : tpl === 'years68' ? YEARS_M_SIZE : YEARS_SIZE, ents = T.entries, n = ents.length;
   const i = Math.min(Math.max(S.yr | 0, 0), Math.max(n - 1, 0)), e = ents[i] || E('','','','','','','');
-  const fs = T.yfs, L = wide ? YL.wide : YL.tall;
+  const fs = T.yfs, L = wide ? YL.wide : tpl === 'years68' ? YL.mid : YL.tall;
 
   ensureAspect(e);
   // الطولي: إطار الصورة بعرض اللوحة كاملاً (يميناً ويساراً). الصورة تبقى كاملة بلا قص،
