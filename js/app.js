@@ -14,40 +14,29 @@ function showError(msg){
 window.addEventListener('error', e => showError('خطأ: ' + e.message));
 window.addEventListener('unhandledrejection', e => showError('خطأ: ' + (e.reason && e.reason.message || e.reason)));
 
-const DEFAULTS = () => ({
+const DEFAULTS0 = () => ({
   template: 'landscape',
   logo: null,
   libLink: {},    // اللوحة المفتوحة من المكتبة لكل نوع: {portrait: id, ...}
-  capfs: 18,
-  wlogo: false,   // الشعار باللون الأبيض (كل اللوحات ما عدا المتحف، ولها إعدادها)
-  yr: 0,      // المحطة المعروضة في لوحات السنوات   // حجم خط المربع السفلي — مشترك بين الطولي والعرضي
+  capfs: 18,     // حجم خط النصوص في الطولي والعرضي
+  wlogo: false,   // الشعار باللون الأبيض
+  yr: 0,          // المحطة المعروضة في لوحات السنوات
   portrait: {
-    photo: null, fit: 'cover', px: 50, py: 50, zoom: 100, fs: 16.5, sfs: 30,
-    side_ar: "رحلة النادي\nإلى الكويت والعراق\n1395 هـ",
-    side_en: "Club trip\nto Kuwait and Iraq\n1395 AH",
-    side_fr: "Voyage du club\nau Koweït et en Irak\n1395 H",
+    photo: null, fit: 'cover', px: 50, py: 50, zoom: 100,
     ar: "صورة من رحلة النادي إلى دولتي الكويت والعراق لإقامة مباريات دولية ودية في سنة 1395 هـ ويظهر في الصورة :\nرئيس النادي الأستاذ/ محمد بن خريف الناشي (رحمه الله)\nوالأستاذ/ عبدالله بن ناصر العميم ،\nوالأستاذ/ عبدالمحسن بن حمد العميم (رحمه الله) ، والأستاذ/ حسن بن حمد بن حسن ، والأستاذ/ أحمد بن خريف الناشي",
     en: "Photo from the club's trip to Kuwait and Iraq to play international friendly matches in 1395 AH. The photo features:\n• Club President, Mr. Mohammed bin Kharif Al-Nashi (may Allah have mercy on him)\n• Mr. Abdullah bin Nasser Al-Omaim\n• Mr. Abdulmohsen bin Hamad Al-Omaim (may Allah have mercy on him)\n• Mr. Hassan bin Hamad bin Hassan\n• Mr. Ahmed bin Kharif Al-Nashi",
     fr: "Photo du voyage du club au Koweït et en Irak pour disputer des matches amicaux internationaux en 1395 H. Sont présents sur la photo :\n• Le président du club, M. Mohammed bin Kharif Al-Nashi (que Dieu lui fasse miséricorde)\n• M. Abdullah bin Nasser Al-Omaim\n• M. Abdulmohsen bin Hamad Al-Omaim (que Dieu lui fasse miséricorde)\n• M. Hassan bin Hamad bin Hassan\n• M. Ahmed bin Kharif Al-Nashi"
   },
   landscape: {
-    photo: null, fit: 'cover', px: 50, py: 50, zoom: 100, fs: 23, gray: false,
+    photo: null, fit: 'cover', px: 50, py: 50, zoom: 100, gray: false,
     ar: "صورة من زيارة صاحب السمو الملكي الأمير / فيصل بن فهد بن عبدالعزيز (رحمه الله) الرئيس العام لرعاية الشباب لمقر النادي الفيصلي بحرمة في حفل أقيم بهذه المناسبة سنة 1396 هـ\nويظهر في الصورة الأستاذ / عبدالله بن ناصر العميم وهدية النادي الى سموه",
     en: "Photo from the visit of His Royal Highness Prince Faisal bin Fahd bin Abdulaziz (may Allah have mercy on him), General President of Youth Welfare, to the headquarters of Al-Faisaly Club in Harmah, during a ceremony held on this occasion in 1396 AH. The photo shows Mr. Abdullah bin Nasser Al-Omaim and the commemorative gift presented by the club to His Highness.",
     fr: "Photo de la visite de Son Altesse Royale le Prince Faisal bin Fahd bin Abdulaziz (que Dieu lui fasse miséricorde), Président général du Bien-être de la Jeunesse, au siège du club Al-Faisaly à Harmah, lors d’une cérémonie organisée à cette occasion en 1396 H. La photo montre également M. Abdullah bin Nasser Al-Omaim ainsi que le cadeau commémoratif offert par le club à Son Altesse."
   },
-  museum: {
-    photo: null, px: 50, py: 50, zoom: 100, fs: 40, ph: 55, wlogo: true,
-    t_ar: "اسم وراءه حكاية",
-    d_ar: "بدأ الفيصلي باسم «شباب حرمة»، واعتمد اسمه الحالي عام 1386هـ، تخليدًا لاسم الملك فيصل. أما الفيحاء، فاحتفظ باسمه بعد اندماجه مع منيخ، وسُجّل رسميًا في العام نفسه. عام جمعهما في السجلات الرسمية، بعد أن بدأت حكاية كل نادٍ بسنوات.",
-    t_en: "A Name with a Story",
-    d_en: "Al-Faisaly began as «Shabab Harmah» and adopted its current name in 1386 AH, honoring King Faisal. Al-Fayha kept its name after merging with Munikh and was officially registered in the same year — one year that joined them in the official records, years after each club's story had begun."
-  },
-  timeline: {
-    fs: 18, yfs: 30, sfrom: '1954', sto: '1981',   // مدى سنوات شريط المسيرة في لوحات السنوات bg: 'old', sepia: true,
-    end_ar: "المستقبل .. مستمر", end_en: "The journey continues", end_fr: "Le parcours continue",
-    name_ar: "النادي الفيصلي السعودي", name_en: "AL FAISALY SAUDI CLUB",
-    sl_ar: "أكثر من ناد .. هوية وانتماء", sl_en: "More than a club .. a belonging", sl_fr: "Plus qu’un club .. une appartenance",
+  timeline: {   // محطات لوحات السنوات 70×90 (ولوحة 60×80 نسختها الخاصة timeline68)
+    yfs: 30,                         // حجم خط النص تحت الصورة
+    sfrom: '1954', sto: '1981',      // مدى سنوات شريط المسيرة
+    bg: 'old', sepia: true,          // الخلفية (ورق قديم / بيج سادة) والصور بلون قديم
     entries: [
       E("1954","التأسيس","Founding","Fondation","تأسس النادي الفيصلي في مدينة حرمة ليكون مصدر فخر لأهله وجماهيره","Al Faisaly was founded in Harmah, becoming a source of pride for its people and supporters.","Al Faisaly a été fondé à Harmah, devenant une source de fierté pour les siens et pour ses supporters."),
       E("1960","البدايات الأولى","Early Years","Les premières années","بناء القاعدة الجماهيرية وتشكيل ملامح النادي","Building the foundation on passion and identity.","Bâtir les fondations avec passion et identité."),
@@ -60,10 +49,14 @@ const DEFAULTS = () => ({
     ]
   }
 });
+/* لوحة 60×80 تبدأ بنسخة مستقلة من محطات 70×90 */
+const DEFAULTS = () => { const d = DEFAULTS0(); d.timeline68 = structuredClone(d.timeline); return d; };
 function E(year, tar, ten, tfr, dar, den, dfr){ return {year, t_ar:tar, t_en:ten, t_fr:tfr, d_ar:dar, d_en:den, d_fr:dfr, c_ar:'', c_en:'', c_fr:'', date:'', hy:'', photo:null, ar:0, px:50, py:50, zoom:100, toff:0, poff:0}; }   // c_ = وصف الصورة (لوحات السنوات)
 
 const KEY = 'faisaly-museum-panels-v1';
-const TEMPLATES = ['portrait','landscape','timeline','museum','years','yearsw','years68'];
+const TEMPLATES = ['portrait','landscape','years','years68'];
+/* تصاميم حُذفت: مشاريعها القديمة تُفتح على أقرب لوحة موجودة */
+const legacyTpl = t => ({timeline:'years', yearsw:'years', museum:'portrait'})[t] || t;
 const isObj = o => !!o && typeof o === 'object' && !Array.isArray(o);
 const safeImg = v => (typeof v === 'string' && v.startsWith('data:image/') && !/["<>]/.test(v)) ? v : null;
 const ENUMS = {fit:['cover','contain'], bg:['old','plain']};
@@ -78,13 +71,13 @@ function normalize(o){
   if(!isObj(o) || !['portrait','landscape','timeline'].some(t => isObj(o[t]))) return null;
   if('timeline' in o && !(isObj(o.timeline) && Array.isArray(o.timeline.entries))) return null;
   const out = DEFAULTS();
-  if(TEMPLATES.includes(o.template)) out.template = o.template;
+  if(TEMPLATES.includes(legacyTpl(o.template))) out.template = legacyTpl(o.template);
   out.logo = safeImg(o.logo);
   out.capfs = cleanVal(o.capfs, out.capfs, 'capfs');
   out.wlogo = o.wlogo === true;
-  if(isObj(o.libLink)) for(const g of ['portrait','landscape','museum','timeline']) if(typeof o.libLink[g] === 'string') out.libLink[g] = o.libLink[g];
+  if(isObj(o.libLink)) for(const g of ['portrait','landscape','timeline','timeline68']) if(typeof o.libLink[g] === 'string') out.libLink[g] = o.libLink[g];
   out.yr = Number.isInteger(o.yr) && o.yr >= 0 ? o.yr : 0;
-  for(const t of ['portrait','landscape','timeline','museum']){
+  for(const t of ['portrait','landscape','timeline','timeline68']){
     if(!isObj(o[t])) continue;
     for(const k in out[t]) if(k !== 'entries') out[t][k] = cleanVal(o[t][k], out[t][k], k);
   }
@@ -97,6 +90,11 @@ function normalize(o){
       return n;
     });
   }
+  // لوحة 60×80: محطاتها الخاصة، وفي المشاريع القديمة تبدأ بنسخة من محطات 70×90
+  if(isObj(o.timeline68) && Array.isArray(o.timeline68.entries)){
+    const blank = E('','','','','','','');
+    out.timeline68.entries = o.timeline68.entries.filter(isObj).map(e => { const n = {...blank}; for(const k in n) n[k] = cleanVal(e[k], blank[k], k); return n; });
+  } else if(o.timeline) out.timeline68 = structuredClone(out.timeline);
   // صياغة المرجع — فقط إذا كان النص ما زال الافتراضي القديم
   const OLD = {"Steady steps towards the first achievements.":"A step towards distinction.","جماهير أوفى وحضور أكبر في مختلف المسابقات":"جماهير أوفى ..\nوحضور أكبر\nفي مختلف المسابقات","Winning titles and establishing the club among the leading teams.":"Winning titles and establishing the club's status among the leading teams.","الفيصلي حاضر دائماً بجماهيره وتاريخه وطموحه":"الفيصلي حاضر دائماً ..\nبجماهيره وتاريخه\nوطموحه"};
   out.timeline.entries.forEach(e => { for(const k of ['d_ar','d_en']) if(OLD[e[k]]) e[k] = OLD[e[k]]; });
@@ -210,7 +208,7 @@ async function translate(text, tl){
 }
 async function doTranslate(btn, pairs){
   // لوحات السنوات بالعربي والإنجليزي فقط: لا داعي لطلب الفرنسية
-  if(['years','yearsw','years68','museum'].includes(S.template)) pairs = pairs.filter(p => p[2] !== 'fr');
+  if(isYears(S.template)) pairs = pairs.filter(p => p[2] !== 'fr');
   // الهدف كائن وليس رقماً: تبقى الترجمة مع محطتها إذا نُقلت أثناء الانتظار
   const jobs = pairs.map(([src, dst, tl]) => {
     const ks = dst.split('.'), key = ks.pop();
@@ -304,78 +302,63 @@ function textBlock(t){
 function buildSide(){
   const t = S.template;
   libRelink();
-  let h = `<h1>صانع لوحات المتحف</h1><div class="sub">النادي الفيصلي السعودي — صورة + نص عربي + ترجمة إنجليزي وفرنسي</div>
+  let h = `<h1>صانع لوحات المتحف</h1><div class="sub">النادي الفيصلي السعودي — صورة + نص عربي + ترجمة (إنجليزي، وفرنسي في الطولي والعرضي)</div>
   ${libStatusHTML()}
   <div class="tabs">
     <button data-tpl="portrait" class="${t==='portrait'?'on':''}">▯ طولي</button>
     <button data-tpl="landscape" class="${t==='landscape'?'on':''}">▭ عرضي</button>
-    <button data-tpl="timeline" class="${t==='timeline'?'on':''}">⟿ خط زمني</button>
-    <button data-tpl="museum" class="${t==='museum'?'on':''}">🏛 لوحة المتحف</button>
     <button data-tpl="years" class="${t==='years'?'on':''}">▣ لوحة لكل سنة</button>
-    <button data-tpl="yearsw" class="${t==='yearsw'?'on':''}">▬ لوحة لكل سنة (عرضي)</button>
     <button data-tpl="years68" class="${t==='years68'?'on':''}">▯ لوحة لكل سنة 60×80</button>
   </div>`;
-  if(t==='museum'){ h += museumSide(); }
-  else if(!isTL(t)){ h += photoBlock(t) + textBlock(t); }
+  if(!isTL(t)){ h += photoBlock(t) + textBlock(t); }
   else{
-    const T = S.timeline, Y = isYears(t);
-    if(Y) h += `<fieldset><legend>اللوحات (${T.entries.length})</legend>
+    const K = TK(t), T = S[K];   // محطات اللوحة المفتوحة فقط (70×90 أو 60×80)
+    h += `<fieldset><legend>اللوحات (${T.entries.length})</legend>
       <div class="hint" style="margin-top:0">لوحة مستقلة لكل سنة. اختر السنة لعرض لوحتها وتعديلها:</div>
       <div class="yrchips">${T.entries.map((e,i)=>`<button class="btn sm ${i===Math.min(S.yr,T.entries.length-1)?'pri':''}" data-yr="${i}">${esc(e.year)||('محطة '+(i+1))}</button>`).join('')}</div>
-      ${rg('timeline.yfs','حجم الخط',18,44,.5)}
+      ${rg(K+'.yfs','حجم الخط',18,44,.5)}
       <label>شريط السنوات (السهم الزمني) — كل السنوات من / إلى:</label>
-      <div class="row"><input type="text" dir="ltr" data-b="timeline.sfrom" value="${esc(T.sfrom)}" placeholder="من سنة" style="flex:1"><input type="text" dir="ltr" data-b="timeline.sto" value="${esc(T.sto)}" placeholder="إلى سنة" style="flex:1"></div>
+      <div class="row"><input type="text" dir="ltr" data-b="${K}.sfrom" value="${esc(T.sfrom)}" placeholder="من سنة" style="flex:1"><input type="text" dir="ltr" data-b="${K}.sto" value="${esc(T.sto)}" placeholder="إلى سنة" style="flex:1"></div>
       <div class="hint">يظهر كل عام بين السنتين، وسنة اللوحة الحالية مميزة. اتركهما فارغتين ليمتد الشريط من أول محطة إلى آخرها.</div>
-      ${rg('timeline.entries.'+Math.min(S.yr,T.entries.length-1)+'.poff','موضع الصورة (لهذه اللوحة): سالب = رفع، موجب = تنزيل',-80,150)}
-      ${rg('timeline.entries.'+Math.min(S.yr,T.entries.length-1)+'.toff','موضع النص تحت الصورة (لهذه اللوحة): سالب = رفع، موجب = تنزيل',-50,150)}
+      ${yearOutOfStrip(T, T.entries[Math.min(S.yr,T.entries.length-1)]) ? `<div class="hint" style="color:var(--m)">⚠ سنة هذه اللوحة (${esc(T.entries[Math.min(S.yr,T.entries.length-1)].year)}) خارج مدى الشريط، فلن تظهر عليه مميزة. وسّع المدى إذا أردت ظهورها.</div>` : ''}
+      ${rg(K+'.entries.'+Math.min(S.yr,T.entries.length-1)+'.poff','موضع الصورة (لهذه اللوحة): سالب = رفع، موجب = تنزيل',-80,150)}
+      ${rg(K+'.entries.'+Math.min(S.yr,T.entries.length-1)+'.toff','موضع النص تحت الصورة (لهذه اللوحة): سالب = رفع، موجب = تنزيل',-50,150)}
       <button class="btn pri" style="width:100%;margin-top:10px" data-expall>⬇ تصدير كل اللوحات (${T.entries.length})</button>
       <div class="hint">كل لوحة في ملف مستقل بالصيغة والجودة المختارتين في الأعلى. إذا سألك المتصفح عن تنزيل عدة ملفات، اختر «السماح».</div>
     </fieldset>`;
-    if(!Y) h += `<fieldset><legend>العنوان</legend>
-      ${tx('timeline.name_ar','اسم النادي')}${tx('timeline.name_en','Club name (EN)','ltr')}
-      ${tx('timeline.sl_ar','الشعار')}
-      <button class="btn sm" style="margin-top:8px" data-trhead>🌐 ترجم الشعار</button>
-      ${tx('timeline.sl_en','Slogan (EN)','ltr')}${tx('timeline.sl_fr','Devise (FR)','ltr')}
-      ${rg('timeline.fs','حجم الخط',12,28,.5)}
-    </fieldset>`;
-    h += `<fieldset><legend>${Y?'الشكل':'الشكل والنهاية'}</legend>
-      ${`<label>الخلفية</label>
-      <select data-b="timeline.bg"><option value="old" ${T.bg==='old'?'selected':''}>ورق تاريخي قديم</option><option value="plain" ${T.bg==='plain'?'selected':''}>بيج سادة</option></select>`}
-      <label><input type="checkbox" data-b="timeline.sepia" data-chk ${T.sepia?'checked':''}> صور بلون قديم (سيبيا)</label>
-      ${Y?'':`${tx('timeline.end_ar','عبارة النهاية')}
-      <button class="btn sm" style="margin-top:8px" data-trend>🌐 ترجم العبارة</button>
-      ${tx('timeline.end_en','End (EN)','ltr')}${tx('timeline.end_fr','Fin (FR)','ltr')}`}
+    h += `<fieldset><legend>الشكل</legend>
+      <label>الخلفية</label>
+      <select data-b="${K}.bg"><option value="old" ${T.bg==='old'?'selected':''}>ورق تاريخي قديم</option><option value="plain" ${T.bg==='plain'?'selected':''}>بيج سادة</option></select>
+      <label><input type="checkbox" data-b="${K}.sepia" data-chk ${T.sepia?'checked':''}> صور بلون قديم (سيبيا)</label>
     </fieldset>
     <fieldset><legend>المحطات (${T.entries.length})</legend>
     <button class="btn pri" style="width:100%;margin-bottom:10px" data-trall>🌐 ترجم جميع المحطات</button>`;
     T.entries.forEach((e,i)=>{
-      const b = `timeline.entries.${i}`;
-      if(Y && i!==Math.min(S.yr,T.entries.length-1)) return;   // لوحات السنوات: نعرض محطة اللوحة الحالية فقط
+      const b = `${K}.entries.${i}`;
+      if(i!==Math.min(S.yr,T.entries.length-1)) return;   // لوحات السنوات: نعرض محطة اللوحة الحالية فقط
       h += `<div class="entry"><h4><span>محطة ${i+1}</span><span>
         ${i>0?`<button class="btn sm" data-mv="${i}" data-d="-1" title="تقديم">▲</button>`:''}
         ${i<T.entries.length-1?`<button class="btn sm" data-mv="${i}" data-d="1" title="تأخير">▼</button>`:''}
         <button class="btn sm danger" data-del="${i}">حذف</button></span></h4>
-        ${Y?'<div class="hint">اكتب السنة الهجرية أو الميلادية — الأخرى تُحوَّل تلقائياً</div>':''}
-        ${Y?tx(b+'.hy','السنة الهجرية','ltr'):''}
-        ${tx(b+'.year',Y?'السنة الميلادية':'السنة','ltr')}
+        <div class="hint">اكتب السنة الهجرية أو الميلادية — الأخرى تُحوَّل تلقائياً</div>
+        ${tx(b+'.hy','السنة الهجرية','ltr')}
+        ${tx(b+'.year','السنة الميلادية','ltr')}
         ${tx(b+'.t_ar','العنوان')}
         ${ta(b+'.d_ar','الوصف','rtl',2)}
-        ${Y?ta(b+'.c_ar','وصف الصورة (من في الصورة، المكان، المناسبة)','rtl',3):''}
+        ${ta(b+'.c_ar','وصف الصورة (من في الصورة، المكان، المناسبة)','rtl',3)}
         <div class="row" style="margin-top:8px"><button class="btn sm pri" data-pick="${b}.photo">📷 صورة</button>${e.photo?`<button class="btn sm danger" data-clear="${b}.photo">إزالة الصورة</button>`:''}<button class="btn sm" data-tre="${i}">🌐 ترجم</button></div>
-        ${e.photo?`<img class="thumb" src="${e.photo}">${Y?'<div class="hint">تظهر الصورة كاملة بنسبتها الأصلية بدون قص. التكبير اختياري.</div>':''}${moveCtl(b, `[data-entry="${i}"]`)}`:''}
+        ${e.photo?`<img class="thumb" src="${e.photo}"><div class="hint">تظهر الصورة كاملة بنسبتها الأصلية بدون قص. التكبير اختياري.</div>${moveCtl(b, `[data-entry="${i}"]`)}`:''}
         ${tx(b+'.t_en','Title (EN)','ltr')}${ta(b+'.d_en','Description (EN)','ltr',2)}
-        ${Y?'':tx(b+'.t_fr','Titre (FR)','ltr')+ta(b+'.d_fr','Description (FR)','ltr',2)}
-        ${Y?ta(b+'.c_en','Photo caption (EN)','ltr',3):''}
+        ${ta(b+'.c_en','Photo caption (EN)','ltr',3)}
       </div>`;
     });
     h += `<button class="btn" style="width:100%" data-add>＋ إضافة محطة</button>
       <button class="btn sm" style="width:100%;margin-top:6px" data-resettl>↺ استعادة المحطات الافتراضية (8)</button>
       <div class="hint">يُفضّل من 5 إلى 9 محطات. الصورة لكل محطة اختيارية.</div></fieldset>`;
   }
-  const wl = t==='museum' ? 'museum.wlogo' : 'wlogo';
   h += `<fieldset><legend>الشعار</legend><div class="row"><button class="btn sm" data-pick="logo">تغيير الشعار</button>${S.logo?'<button class="btn sm danger" data-clear="logo">الشعار الافتراضي</button>':''}</div>
-    <label><input type="checkbox" data-b="${wl}" data-chk ${getP(S,wl)?'checked':''}> الشعار باللون الأبيض</label>
-    ${t!=='museum'?'<div class="hint">الشعار الأبيض يناسب الخلفيات الداكنة أو الصور — على الخلفية البيضاء أو الفاتحة لن يظهر.</div>':''}</fieldset>`;
+    <label><input type="checkbox" data-b="wlogo" data-chk ${S.wlogo?'checked':''}> الشعار باللون الأبيض</label>
+    <div class="hint">الشعار الأبيض يناسب الخلفيات الداكنة أو الصور — على الخلفية البيضاء أو الفاتحة لن يظهر.</div></fieldset>`;
   document.getElementById('side').innerHTML = h;
 }
 
@@ -387,8 +370,8 @@ function photoHTML(P, cls=''){
 }
 const logoSrc = () => S.logo || LOGO;
 
-const SIZES = {portrait:[1200,1700], landscape:[2100,1500], timeline:[3200,1800], museum:MUSEUM_SIZE, years:YEARS_SIZE, yearsw:YEARS_W_SIZE, years68:YEARS_M_SIZE};
-const isTL = t => t==='timeline' || isYears(t);   // التصميمان يستخدمان نفس بيانات المحطات
+const SIZES = {portrait:[1200,1700], landscape:[2100,1500], years:YEARS_SIZE, years68:YEARS_M_SIZE};
+const isTL = t => isYears(t);   // لوحات السنوات: المحطات في S[TK(t)]
 
 function render(){
   const t = S.template, el = document.getElementById('design');
@@ -414,100 +397,12 @@ function render(){
       </div>
       ${photoHTML(P,'card')}
     </div>`;
-  } else if(t==='museum'){
-    h = renderMuseum();
-  } else if(isYears(t)){
-    h = renderYears(t);
   } else {
-    const T = S.timeline, [W,H] = SIZES.timeline, n = Math.max(T.entries.length,1);
-    // خط شبه مستقيم بدرجات صغيرة، والمحطات تتناوب تحت الخط وفوقه بنفس المقاس
-    const x0 = 170, phH = 200, gapPh = 18, txtH = 330, cardH = phH + gapPh + txtH;
-    const slot = n > 1 ? Math.min((W - 80 - 340 - 520 - x0) / (n - 1), 700) : 0;
-    const cw = n > 1 ? Math.min(2*slot - 60, 520) : 520;
-    // درجات واضحة: أكبر ارتفاع يسمح به المكان (حتى 60) مع بقاء المحطات العليا والسفلى داخل اللوحة
-    // الدرجة تصعد قبل المحطة مباشرة؛ النص العلوي يعلو كل درجة تقع تحته (kUp) فيبقى بنفس البعد عن الخط
-    const stepX = j => x0 + j*slot - 30;
-    let kUp = 0;
-    for(let i=1;i<n;i+=2){ let k = 0; for(let j=i+1;j<n;j++) if(stepX(j) <= x0 + i*slot + 22 + cw + 10) k++; kUp = Math.max(kUp, k); }
-    const rise = n > 1 ? Math.min(60, (H - 160 - 2*cardH - 90) / (n - 1 + kUp)) : 0;
-    const upGap = 40 + kUp*rise;          // بعد النص العلوي عن نقطة محطته
-    const yBase = H - 80 - 50 - cardH;
-    const pts = T.entries.map((e,i)=>({x: x0 + i*slot, y: yBase - i*rise, up: i%2===1}));
-    const y0 = pts.length ? pts[0].y : 1000;
-    const last = pts[pts.length-1] || {x:x0, y:1000};
-    const xe = Math.min(last.x + cw + 60, W - 380), ye = last.y;
-    const P = [[x0-110, y0]];
-    pts.forEach((p,i)=>{ if(i===0){ P.push([p.x,p.y]); return; } const mx = stepX(i); P.push([mx, pts[i-1].y],[mx, p.y],[p.x, p.y]); });
-    P.push([xe + 250, ye]);
-    const r = 0; let d = `M${P[0][0]},${P[0][1]}`;   // خط مستقيم بزوايا حادة
-    for(let i=1;i<P.length;i++){
-      const [x,y] = P[i], nx = P[i+1];
-      if(!nx){ d += ` L${x},${y}`; break; }
-      const [px,py] = P[i-1];
-      const d1 = Math.hypot(x-px,y-py), d2 = Math.hypot(nx[0]-x,nx[1]-y);
-      const rr = Math.min(r, d1/2, d2/2);
-      if(rr < 1){ d += ` L${x},${y}`; continue; }
-      const ax = x - (x-px)/d1*rr, ay = y - (y-py)/d1*rr, bx = x + (nx[0]-x)/d2*rr, by = y + (nx[1]-y)/d2*rr;
-      d += ` L${ax},${ay} Q${x},${y} ${bx},${by}`;
-    }
-    const paper = T.bg==='plain' ? '' : `<svg class="paper" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
-      <defs>
-        <filter id="grain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="3" seed="4"/><feColorMatrix values="0 0 0 0 .35  0 0 0 0 .22  0 0 0 0 .1  0 0 0 .22 0"/></filter>
-        <filter id="mottle" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".0035 .006" numOctaves="4" seed="9"/><feColorMatrix values="0 0 0 0 .45  0 0 0 0 .3  0 0 0 0 .12  0 0 0 .9 -.32"/></filter>
-        <radialGradient id="vig" cx="50%" cy="50%" r="75%"><stop offset="55%" stop-color="#5a3510" stop-opacity="0"/><stop offset="100%" stop-color="#5a3510" stop-opacity=".45"/></radialGradient>
-        <radialGradient id="glow" cx="45%" cy="40%" r="60%"><stop offset="0%" stop-color="#fff8e6" stop-opacity=".55"/><stop offset="100%" stop-color="#fff8e6" stop-opacity="0"/></radialGradient>
-        <radialGradient id="stain" r="50%"><stop offset="0%" stop-color="#8a5a24" stop-opacity=".03"/><stop offset="86%" stop-color="#8a5a24" stop-opacity=".05"/><stop offset="96%" stop-color="#8a5a24" stop-opacity=".1"/><stop offset="100%" stop-color="#8a5a24" stop-opacity="0"/></radialGradient>
-      </defs>
-      <rect width="100%" height="100%" fill="url(#glow)"/>
-      <rect width="100%" height="100%" filter="url(#mottle)"/>
-      <circle cx="${W*.83}" cy="${H*.18}" r="190" fill="url(#stain)"/>
-      <circle cx="${W*.36}" cy="${H*.86}" r="140" fill="url(#stain)"/>
-      <circle cx="${W*.07}" cy="${H*.78}" r="110" fill="url(#stain)"/>
-      <rect width="100%" height="100%" filter="url(#grain)"/>
-      <rect width="100%" height="100%" fill="url(#vig)"/>
-    </svg><div class="frame"></div>`;
-    h = `<div class="d timeline ${T.bg==='plain'?'plain':''}" style="--fs:${T.fs}px">
-      ${paper}
-      <div class="hd"><img class="logo" src="${logoSrc()}"></div>
-      <svg class="path" width="${W}" height="${H}">
-        <path d="${d}" fill="none" stroke="#7a1c1c" stroke-width="6" stroke-linecap="round"/>
-        <circle cx="${x0-90}" cy="${y0}" r="9" fill="#7a1c1c"/>
-        ${pts.map(p=>`<line x1="${p.x}" y1="${p.y}" x2="${p.x}" y2="${p.up ? p.y-upGap : p.y+50}" stroke="#7a1c1c" stroke-width="3"/>`).join('')}
-        ${pts.map(p=>`<circle cx="${p.x}" cy="${p.y}" r="17" fill="#7a1c1c" stroke="#efe2c8" stroke-width="6"/>`).join('')}
-        <path d="M${xe+244},${ye-18} L${xe+278},${ye} L${xe+244},${ye+18} Z" fill="#7a1c1c"/>
-      </svg>
-      <div class="end" style="left:${xe}px;top:${ye+44}px;width:${W-xe-80}px">
-        <div class="e-ar">${esc(T.end_ar)}</div><div class="e-en">${esc(T.end_en)}</div><div class="e-fr">${esc(T.end_fr)}</div>
-        <div style="width:120px;height:4px;background:#7a1c1c;margin-top:16px"></div>
-      </div>`;
-    T.entries.forEach((e,i)=>{
-      const p = pts[i], left = p.x + 22;
-      // فوق الخط: الصورة في الأعلى والنص قرب الخط — تحت الخط: النص قرب الخط والصورة في الأسفل
-      const top = p.up ? p.y - upGap - cardH : p.y + 50;
-      const phTop = p.up ? top : top + txtH + gapPh, txtTop = p.up ? top + phH + gapPh : top;
-      const img = e.photo ? `<img src="${e.photo}" style="${imgStyle(e)}">` : `<div class="ph-empty-in">＋ أضف صورة<small>${esc(e.year)}</small></div>`;
-      h += `<div class="tph ${T.sepia?'old':''} ${e.photo?'':'ph-empty'}" data-entry="${i}" style="left:${left}px;top:${phTop}px;width:${cw}px;height:${phH}px">${img}</div>`;
-      h += `<div class="tc fit ${p.up?'up':''}" data-group="tl" data-max="${T.fs}" style="left:${left}px;top:${txtTop}px;width:${cw}px;height:${txtH}px;--fs:${T.fs}px">
-          <div class="yr">${esc(e.year)}</div>
-          <div class="ti-ar">${esc(e.t_ar)}</div><div class="ti-en">${esc(e.t_en)}</div><div class="ti-fr">${esc(e.t_fr)}</div>
-          <div class="t ar">${txt(e.d_ar)}</div><div class="t">${txt(e.d_en)}</div><div class="t"><i>${txt(e.d_fr)}</i></div>
-        </div>`;
-    });
-    h += `</div>`;
+    h = renderYears(t);
   }
   el.innerHTML = h;
-  if(t!=='museum' && el.firstElementChild) el.firstElementChild.classList.toggle('wlogo', !!S.wlogo);
-  autoFit(); fitStage(); updateMoveCtl(); updateFsHint();
-}
-const HEADER_MAX = {hd:760, whd:980, w4hd:780};   // أقصى عرض لنصوص الشعار في كل تصميم
-function fitHeaders(){
-  document.querySelectorAll('.hd,.whd,.w4hd').forEach(h => {
-    h.style.removeProperty('--u');
-    const u = parseFloat(getComputedStyle(h).getPropertyValue('--u'));
-    const w = Math.max(0, ...[...h.querySelectorAll('.n-ar,.n-en,.sl-ar,.sl')].map(e => e.offsetWidth));
-    const max = HEADER_MAX[h.className.split(' ')[0]];
-    if(w > max) h.style.setProperty('--u', (u * max / w) + 'px');
-  });
+  if(el.firstElementChild) el.firstElementChild.classList.toggle('wlogo', !!S.wlogo);
+  autoFit(); fixJustify(); fitStage(); updateMoveCtl(); updateFsHint();
 }
 let fitOverflow = 0;
 function autoFit(){
@@ -533,7 +428,6 @@ function autoFit(){
     const base = Math.max(Math.min(...groups[g].map(x=>x.fs)), floor);
     groups[g].forEach(x=>x.f.style.setProperty(x.v, Math.min(x.fs, base)+'px'));
   }
-  fitHeaders();
   if(!document.getElementById('stage').clientWidth) return;   // المعاينة مخفية: تُفحص عند ظهورها
   const over = boxes.filter(f => f.scrollHeight > f.clientHeight+1 || f.scrollWidth > f.clientWidth+1).length;
   if(over && !fitOverflow) toast('نص طويل لا يتسع في إطاره وسيُقص — اختصره قبل الطباعة');
@@ -570,8 +464,8 @@ async function setImage(path, file){
   if(path==='logo') data = await prepLogo(data);
   setP(S, path, data);
   // صور المحطات: نحفظ نسبة الأبعاد الأصلية فقط — الصورة نفسها تبقى كما هي بدون تعديل
-  const m = path.match(/^timeline\.entries\.(\d+)\.photo$/);
-  if(m) S.timeline.entries[+m[1]].ar = await photoAspect(data);
+  const m = path.match(/^(timeline|timeline68)\.entries\.(\d+)\.photo$/);
+  if(m) S[m[1]].entries[+m[2]].ar = await photoAspect(data);
   buildSide(); render(); save();
 }
 document.getElementById('hiddenImg').addEventListener('change', e=>{ if(pickTarget) setImage(pickTarget, e.target.files[0]); e.target.value=''; });
@@ -586,14 +480,17 @@ side.addEventListener('input', e=>{
   else if(e.target.dataset.num !== undefined){ v = parseFloat(v); const b = side.querySelector(`[data-v="${p}"]`); if(b) b.textContent = v; }
   setP(S, p, v);
   // لوحات السنوات: كتابة إحدى السنتين تملأ الأخرى تلقائياً
-  const m = /^(timeline\.entries\.\d+)\.(hy|year)$/.exec(p);
+  const m = /^((?:timeline|timeline68)\.entries\.\d+)\.(hy|year)$/.exec(p);
   const other = m && side.querySelector(`[data-b="${m[1]}.${m[2]==='hy'?'year':'hy'}"]`);
   if(other){
     const s = String(v).trim(), conv = m[2]==='hy' ? hijriToGreg(s) : gregToHijri(s);
     if(conv){ setP(S, other.dataset.b, conv); other.value = conv; }
   }
-  render(); save();
+  renderSoon(); save();
 });
+/* الكتابة السريعة: رسم واحد لكل إطار شاشة بدل رسم مع كل حرف */
+let renderQ = 0;
+function renderSoon(){ if(!renderQ) renderQ = requestAnimationFrame(() => { renderQ = 0; render(); }); }
 side.addEventListener('change', e=>{ if(e.target.dataset.chk !== undefined){ setP(S, e.target.dataset.b, e.target.checked); render(); save(); } });
 side.addEventListener('click', e=>{
   const b = e.target.closest('button'); if(!b) return;
@@ -607,21 +504,17 @@ side.addEventListener('click', e=>{
   else if(d.center){ setP(S, d.center+'.px', 50); setP(S, d.center+'.py', 50); buildSide(); render(); save(); }
   else if(d.clear){ setP(S, d.clear, null); buildSide(); render(); save(); }
   else if(d.tr){ const t = d.tr; doTranslate(b, [[t+'.ar', t+'.en','en'],[t+'.ar', t+'.fr','fr']]); }
-  else if(d.tre !== undefined){ const p = 'timeline.entries.'+d.tre; doTranslate(b, ['t','d','c'].flatMap(k=>[[`${p}.${k}_ar`,`${p}.${k}_en`,'en'],[`${p}.${k}_ar`,`${p}.${k}_fr`,'fr']])); }
-  else if(d.trall !== undefined){ const pairs = []; S.timeline.entries.forEach((_,i)=>{ const p='timeline.entries.'+i; ['t','d','c'].forEach(k=>{ pairs.push([`${p}.${k}_ar`,`${p}.${k}_en`,'en'],[`${p}.${k}_ar`,`${p}.${k}_fr`,'fr']); }); }); doTranslate(b, pairs); }
-  else if(d.trm !== undefined){ doTranslate(b, [['museum.t_ar','museum.t_en','en'],['museum.d_ar','museum.d_en','en']]); }
-  else if(d.trside !== undefined){ doTranslate(b, [['portrait.side_ar','portrait.side_en','en'],['portrait.side_ar','portrait.side_fr','fr']]); }
-  else if(d.trend !== undefined){ doTranslate(b, [['timeline.end_ar','timeline.end_en','en'],['timeline.end_ar','timeline.end_fr','fr']]); }
-  else if(d.resettl !== undefined){ if(confirm('استبدال المحطات الحالية بالمحطات الافتراضية؟')){ snapshot(); S.timeline.entries = DEFAULTS().timeline.entries; buildSide(); render(); save(); } }
-  else if(d.trhead !== undefined){ doTranslate(b, [['timeline.sl_ar','timeline.sl_en','en'],['timeline.sl_ar','timeline.sl_fr','fr']]); }
-  else if(d.add !== undefined){ S.timeline.entries.push(E('','','','','','','')); buildSide(); render(); save(); side.scrollTop = side.scrollHeight; }
-  else if(d.del !== undefined){ if(confirm('حذف هذه المحطة؟')){ snapshot(); S.timeline.entries.splice(+d.del,1); buildSide(); render(); save(); } }
-  else if(d.mv !== undefined){ const a = S.timeline.entries, i = +d.mv, j = i + +d.d; [a[i],a[j]] = [a[j],a[i]]; buildSide(); render(); save(); }
+  else if(d.tre !== undefined){ const p = TK()+'.entries.'+d.tre; doTranslate(b, ['t','d','c'].flatMap(k=>[[`${p}.${k}_ar`,`${p}.${k}_en`,'en'],[`${p}.${k}_ar`,`${p}.${k}_fr`,'fr']])); }
+  else if(d.trall !== undefined){ const pairs = []; S[TK()].entries.forEach((_,i)=>{ const p=TK()+'.entries.'+i; ['t','d','c'].forEach(k=>{ pairs.push([`${p}.${k}_ar`,`${p}.${k}_en`,'en'],[`${p}.${k}_ar`,`${p}.${k}_fr`,'fr']); }); }); doTranslate(b, pairs); }
+  else if(d.resettl !== undefined){ if(confirm('استبدال المحطات الحالية بالمحطات الافتراضية؟')){ snapshot(); S[TK()].entries = DEFAULTS().timeline.entries; buildSide(); render(); save(); } }
+  else if(d.add !== undefined){ S[TK()].entries.push(E('','','','','','','')); buildSide(); render(); save(); side.scrollTop = side.scrollHeight; }
+  else if(d.del !== undefined){ if(confirm('حذف هذه المحطة؟')){ snapshot(); S[TK()].entries.splice(+d.del,1); buildSide(); render(); save(); } }
+  else if(d.mv !== undefined){ const a = S[TK()].entries, i = +d.mv, j = i + +d.d; [a[i],a[j]] = [a[j],a[i]]; buildSide(); render(); save(); }
 });
 const designEl = document.getElementById('design');
 designEl.addEventListener('click', e=>{
   const fr = e.target.closest('[data-entry]');
-  if(fr){ pick('timeline.entries.'+fr.dataset.entry+'.photo'); return; }
+  if(fr){ pick(TK()+'.entries.'+fr.dataset.entry+'.photo'); return; }
   if(e.target.closest('[data-drop]') && !isTL(S.template)) pick(S.template+'.photo');
 });
 const stage = document.getElementById('stage');
@@ -630,7 +523,7 @@ stage.addEventListener('drop', e=>{
   e.preventDefault(); const f = e.dataTransfer.files[0]; if(!f) return;
   if(isTL(S.template)){
     const fr = e.target.closest('[data-entry]');
-    if(fr) setImage('timeline.entries.'+fr.dataset.entry+'.photo', f);
+    if(fr) setImage(TK()+'.entries.'+fr.dataset.entry+'.photo', f);
     else toast('أفلت الصورة فوق إطار المحطة المطلوبة');
     return;
   }
@@ -654,9 +547,9 @@ async function exportCurrent(){
   canvas.width = canvas.height = 0;   // تحرير الذاكرة
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  let name = {portrait:'لوحة-طولية', landscape:'لوحة-عرضية', timeline:'خط-زمني', museum:'لوحة-المتحف', years:'لوحة-سنة', yearsw:'لوحة-سنة-عرضي', years68:'لوحة-سنة-60x80'}[S.template];
+  let name = {portrait:'لوحة-طولية', landscape:'لوحة-عرضية', years:'لوحة-سنة', years68:'لوحة-سنة-60x80'}[S.template];
   if(isYears(S.template)){
-    const i = Math.min(S.yr, S.timeline.entries.length-1), y = String(S.timeline.entries[i]?.year || '').replace(/[\\/:*?"<>|\s]+/g,'-');
+    const i = Math.min(S.yr, S[TK()].entries.length-1), y = String(S[TK()].entries[i]?.year || '').replace(/[\\/:*?"<>|\s]+/g,'-');
     name += `-${String(i+1).padStart(2,'0')}${y?'-'+y:''}`;
   }
   a.download = `${name}-${new Date().toISOString().slice(0,16).replace(/[T:]/g,'-')}.${fmt}`; a.href = url;
@@ -674,7 +567,7 @@ document.getElementById('exp').addEventListener('click', async e=>{
 });
 /* لوحات السنوات: كل لوحة في ملف مستقل */
 async function exportAll(btn){
-  const n = S.timeline.entries.length, keep = S.yr;
+  const n = S[TK()].entries.length, keep = S.yr;
   const exp = document.getElementById('exp');
   btn.disabled = exp.disabled = true; clearError();
   let done = 0;
@@ -723,7 +616,7 @@ function unpackImages(o){
 document.getElementById('saveProj').onclick = async e=>{
   const b = e.currentTarget, old = b.textContent; b.disabled = true; b.textContent = '... جاري الحفظ';
   try{
-    await libSafeguard(['portrait','landscape','museum','timeline']);   // ما لم يُحفظ بعد يدخل المكتبة أولاً
+    await libSafeguard(['portrait','landscape','timeline','timeline68']);   // ما لم يُحفظ بعد يدخل المكتبة أولاً
     save(); libUpdateCount(); buildSide();
     const library = await libExportAll();
     downloadJSON(packImages({...S, library}), `كل-لوحات-النادي-${new Date().toISOString().slice(0,10)}.json`);
@@ -739,7 +632,7 @@ document.getElementById('projFile').addEventListener('change', async e=>{
   try{ raw = unpackImages(JSON.parse(await f.text())); next = normalize(raw); }catch(err){}
   if(!next){ toast('هذا الملف ليس مشروع لوحات — لم يتغير عملك'); return; }
   await libSyncNow();
-  await libSafeguard(['portrait','landscape','museum','timeline']);   // لا يضيع عمل غير محفوظ
+  await libSafeguard(['portrait','landscape','timeline','timeline68']);   // لا يضيع عمل غير محفوظ
   const r = await libImport(raw.library);
   // لوحة نسختها في المكتبة أحدث من الملف: نعرض النسخة الأحدث في المحرر ونبقيها مرتبطة،
   // بدل نسخة الملف القديمة (التي كانت تُحفظ لاحقاً كلوحة مكررة)
@@ -763,7 +656,7 @@ document.getElementById('undo').onclick = ()=>{
 document.getElementById('clearCur').onclick = async ()=>{
   const t = S.template;
   const msg = isTL(t)
-    ? 'تفريغ كل المحطات وصورها؟\nالمحطات مشتركة، فسيشمل ذلك: خط زمني، لوحات السنوات.'
+    ? `تفريغ كل محطات لوحات السنوات ${t==='years68'?'60×80':'70×90'} وصورها؟\n(اللوحات بالمقاس الآخر لا تتأثر)`
     : 'تفريغ اللوحة الحالية (الصورة والنصوص)؟';
   if(!confirm(msg)) return;
   const g = libGroup(t);
@@ -771,11 +664,9 @@ document.getElementById('clearCur').onclick = async ()=>{
   const wasLinked = !!S.libLink[g], kept = wasLinked ? null : (await libSafeguard([g]))[0];
   delete S.libLink[g];   // اللوحة الجديدة لا تكتب فوق المحفوظة
   snapshot();
-  if(isTL(t)) S.timeline.entries = S.timeline.entries.map(()=>E('','','','','','',''));
-  else if(t==='museum') Object.assign(S.museum, {photo:null, t_ar:'', d_ar:'', t_en:'', d_en:'', px:50, py:50, zoom:100});
+  if(isTL(t)) S[TK(t)].entries = S[TK(t)].entries.map(()=>E('','','','','','',''));
   else{
     Object.assign(S[t], {photo:null, ar:'', en:'', fr:'', px:50, py:50, zoom:100, fit:'cover', gray:false});
-    if(t==='portrait') Object.assign(S[t], {side_ar:'', side_en:'', side_fr:''});
   }
   refresh(); libUpdateCount();
   toast('تم التفريغ' + (kept ? ` — حُفظت السابقة في المكتبة باسم «${kept.name}»` : wasLinked ? ' — اللوحة السابقة باقية في المكتبة' : '') + '، ويمكنك التراجع بزر "تراجع"');

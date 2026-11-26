@@ -1,11 +1,11 @@
 /* ============================================================
-   لوحات السنوات — لوحة جدارية مستقلة لكل محطة من الخط الزمني.
-   السنة + العنوان + الصورة + وصف الصورة + نص المحطة بثلاث لغات،
-   وفي الأسفل شريط صغير يبيّن موقع اللوحة في المسيرة.
-   تستخدم نفس بيانات الخط الزمني (S.timeline).
+   لوحات السنوات — لوحة جدارية مستقلة لكل محطة.
+   السنة (هجري/ميلادي) + العنوان + الصورة + وصف الصورة + النص بالعربي والإنجليزي،
+   وفي الأسفل شريط السنوات يبيّن موقع اللوحة في المسيرة.
+   لوحة 70×90 تستخدم S.timeline، ولوحة 60×80 تستخدم S.timeline68 — منفصلتان.
    ============================================================ */
 
-const YEARS_SIZE = [1400, 1800], YEARS_W_SIZE = [1800, 1400], YEARS_M_SIZE = [1350, 1800];   // + طولي 60×80 سم   // طولي 70×90 سم / عرضي 90×70 سم
+const YEARS_SIZE = [1400, 1800], YEARS_M_SIZE = [1350, 1800];   // طولي 70×90 سم / طولي 60×80 سم
 
 /* خلفية ورق قديم (SVG) */
 function wallPaper(W, H){
@@ -35,27 +35,17 @@ function ensureAspect(e){
   photoAspect(e.photo).then(ar => { measuring.delete(e.photo); if(ar){ e.ar = ar; save(); render(); } });
 }
 
-/* إطار الصورة يأخذ نسبة الصورة الأصلية داخل المساحة المتاحة — لا قص ولا تمديد */
-function fitFrame(box, ar, border){
-  if(!ar) return box;
-  const iw0 = box.w - 2*border, ih0 = box.h - 2*border;
-  let iw = iw0, ih = iw0 / ar;
-  if(ih > ih0){ ih = ih0; iw = ih0 * ar; }
-  const w = Math.round(iw + 2*border), h = Math.round(ih + 2*border);
-  return { x: Math.round(box.x + (box.w - w)/2), y: Math.round(box.y + (box.h - h)/2), w, h };
-}
-
-/* مقاسات اللوحتين: العرضي 90×70 سم والطولي 70×90 سم */
+/* مواضع العناصر: 70×90 سم (tall) و60×80 سم (mid) */
 const YL = {
-  wide: { logo:{x:70, y:60, s:150}, yr:{y:100, fs:42}, ti:{x:270, w:1260, y:165, h:100, ts:36},
-          box:{x:150, y:295, w:1500, h:695}, tx:{y:1064, h:168, l:110, r:1690}, sy:1268 },
   tall: { logo:{x:70, y:60, s:170}, yr:{y:110, fs:44}, ti:{x:270, w:860, y:180, h:110, ts:40},
           box:{x:100, y:320, w:1200, h:960}, tx:{y:1342, h:262, l:100, r:1300}, sy:1660 },
   // طولي 60×80 سم: نفس مواصفات الطولي وارتفاعه، أضيق فقط
   mid:  { logo:{x:70, y:60, s:170}, yr:{y:110, fs:44}, ti:{x:270, w:810, y:180, h:110, ts:40},
           box:{x:75, y:320, w:1200, h:960}, tx:{y:1342, h:262, l:90, r:1260}, sy:1660 },
 };
-const isYears = t => t === 'years' || t === 'yearsw' || t === 'years68';
+const isYears = t => t === 'years' || t === 'years68';
+/* كل مقاس له محطاته الخاصة: 70×90 ← S.timeline و60×80 ← S.timeline68 (لا تكرار بينهما) */
+const TK = (t = S.template) => t === 'years68' ? 'timeline68' : 'timeline';
 
 /* السنة الهجرية: المكتوبة في المحطة، وإلا تُحسب تقريبياً من الميلادية */
 function hijriYear(e){
@@ -95,37 +85,46 @@ function yearsLogo(){
   return src;
 }
 
+/* مدى شريط السنوات: من/إلى المكتوبين، وإلا من أول محطة إلى آخرها */
+function stripRange(T){
+  let a = parseInt(T.sfrom), b = parseInt(T.sto);
+  if(!(a > 0 && b >= a && b - a <= 80)){
+    const ys = T.entries.map(x => parseInt(x.year)).filter(v => v > 0);
+    a = Math.min(...ys); b = Math.max(...ys);
+  }
+  return [a, b];
+}
+function yearOutOfStrip(T, e){
+  const v = parseInt(e && e.year), [a, b] = stripRange(T);
+  return v > 0 && isFinite(a) && (v < a || v > b);
+}
+
 function renderYears(tpl = 'years'){
-  const wide = tpl === 'yearsw';
-  const T = S.timeline, [W, H] = wide ? YEARS_W_SIZE : tpl === 'years68' ? YEARS_M_SIZE : YEARS_SIZE, ents = T.entries, n = ents.length;
+  const T = S[TK(tpl)], [W, H] = tpl === 'years68' ? YEARS_M_SIZE : YEARS_SIZE, ents = T.entries, n = ents.length;
   const i = Math.min(Math.max(S.yr | 0, 0), Math.max(n - 1, 0)), e = ents[i] || E('','','','','','','');
-  const fs = T.yfs, L = wide ? YL.wide : tpl === 'years68' ? YL.mid : YL.tall;
+  const fs = T.yfs, L = tpl === 'years68' ? YL.mid : YL.tall;
 
   ensureAspect(e);
-  // الطولي: إطار الصورة بعرض اللوحة كاملاً (يميناً ويساراً). الصورة تبقى كاملة بلا قص،
+  // إطار الصورة بعرض المساحة كاملاً وارتفاعه حسب نسبة الصورة. الصورة تبقى كاملة بلا قص،
   // والفراغ حولها (إن وُجد) يُملأ بنسخة مموّهة منها بدل خلفية فارغة
-  let fr = e.photo ? fitFrame(L.box, e.ar, 0) : L.box;
-  if(!wide && e.photo){
+  let fr = L.box;
+  if(e.photo){
     const h = e.ar ? Math.min(L.box.h, Math.round(L.box.w / e.ar)) : L.box.h;
     fr = {x: L.box.x, w: L.box.w, h, y: L.box.y};
   }
-  else if(e.photo) fr = {...fr, y: L.box.y};   // الصورة تبدأ من أعلى مساحتها
   // رفع/تنزيل الصورة لكل لوحة (poff) — بين العنوان ومساحة النص فقط، فلا يتغير التصميم
   const base = fr.y + fr.h;   // أسفل الصورة قبل تحريكها: النص يُحسب منه فلا يتبع الصورة
   { const lo = L.ti.y + L.ti.h + 10, hi = L.tx.y + L.tx.h - 110 - fr.h;
     fr = {...fr, y: Math.round(Math.max(lo, Math.min(Math.max(lo, hi), fr.y + (+e.poff || 0))))}; }
   const img = e.photo
-    ? (wide ? '' : `<img class="ybg" src="${e.photo}" alt="">`) + `<img class="ymain" src="${e.photo}" style="${imgStyle(e, 'contain')}">`
+    ? `<img class="ybg" src="${e.photo}" alt="">` + `<img class="ymain" src="${e.photo}" style="${imgStyle(e, 'contain')}">`
     : `<div class="ph-empty-in">＋ أضف صورة<small>${esc(e.year)}</small></div>`;
 
   // شريط المسيرة: كل السنوات من سنة البداية إلى سنة النهاية (مثلاً 1954 → 1981) من اليمين إلى اليسار،
   // سنوات المحطات بنقطة أوضح، وسنة اللوحة الحالية مميزة
   const cur = parseInt(e.year), stations = new Set(ents.map(x => parseInt(x.year)));
-  let yFrom = parseInt(T.sfrom), yTo = parseInt(T.sto);
-  if(!(yFrom > 0 && yTo >= yFrom && yTo - yFrom <= 80)){   // مدى غير صالح: من أول محطة إلى آخر محطة
-    const ys = [...stations].filter(v => v > 0); yFrom = Math.min(...ys); yTo = Math.max(...ys);
-    if(!isFinite(yFrom)){ yFrom = yTo = cur || 0; }
-  }
+  let [yFrom, yTo] = stripRange(T);
+  if(!isFinite(yFrom)){ yFrom = yTo = cur || 0; }
   const years = []; for(let v = yFrom; v <= yTo; v++) years.push(v);
   const m = years.length, x0 = 150, x1 = W - 150, sy = L.sy;
   const sx = k => m > 1 ? x1 - k * (x1 - x0) / (m - 1) : W / 2;   // من اليمين إلى اليسار
@@ -150,7 +149,7 @@ function renderYears(tpl = 'years'){
   const ty = Math.max(fr.y + fr.h + 10, Math.min(tx.y + tx.h - 100, base + 60 + (+e.toff || 0))), th = tx.y + tx.h - ty;
   const t = `top:${ty}px;height:${th}px;width:${cw}px;--fs:${fs}px`;
 
-  return `<div class="d years ${wide?'wide':''} ${T.bg==='plain'?'plain':''}" style="width:${W}px;height:${H}px">
+  return `<div class="d years ${T.bg==='plain'?'plain':''}" style="width:${W}px;height:${H}px">
     ${T.bg==='plain' ? '' : wallPaper(W, H)}
     <div class="frame"></div>
     <img class="logo ylogo" src="${yearsLogo()}" style="left:${L.logo.x}px;top:${L.logo.y}px;width:${L.logo.s}px;height:${L.logo.s}px">
@@ -166,4 +165,38 @@ function renderYears(tpl = 'years'){
     <svg class="ystrip" width="${W}" height="${H}">${strip}</svg>
     ${labels}
   </div>`;
+}
+
+/* محاذاة الطرفين تفتح فراغات كبيرة بين الكلمات في الأسطر القصيرة.
+   لكل فقرة: نقيس الأسطر، وإذا كان التوزيع سيضيف أكثر من عُشر حرف تقريباً بين الكلمات
+   نكتفي بالمحاذاة العادية (يمين للعربي، يسار للإنجليزي) لتلك الفقرة فقط */
+function fixJustify(){
+  const els = document.querySelectorAll('#design .years .ycol .c, #design .years .ycol .t');
+  for(const el of els){
+    el.style.textAlign = 'start'; el.style.textAlignLast = 'auto';
+    // المعاينة مصغّرة على الشاشة: نحوّل القياس إلى مقاس التصميم الحقيقي
+    const k0 = el.getBoundingClientRect().width / (el.offsetWidth || 1) || 1;
+    const fs = parseFloat(getComputedStyle(el).fontSize) * k0, W = el.clientWidth * k0;
+    const lines = new Map(), walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    let para = 0, bad = false, node;
+    while((node = walker.nextNode())){
+      const t = node.textContent, re = /\S+/g; let m, last = 0;
+      while((m = re.exec(t))){
+        if(t.slice(last, m.index).includes('\n')) para++;
+        last = m.index + m[0].length;
+        const r = document.createRange(); r.setStart(node, m.index); r.setEnd(node, last);
+        const b = r.getClientRects()[0]; if(!b) continue;
+        const k = Math.round(b.top);
+        const L = lines.get(k) || {l: Infinity, r: -Infinity, n: 0, p: para};
+        L.l = Math.min(L.l, b.left); L.r = Math.max(L.r, b.right); L.n++; lines.set(k, L);
+      }
+    }
+    const arr = [...lines.values()];
+    arr.forEach((L, i) => {
+      const next = arr[i + 1];
+      if(!next || next.p !== L.p || L.n < 2) return;   // آخر سطر في الفقرة لا يُوزّع
+      if((W - (L.r - L.l)) / (L.n - 1) > fs * .12) bad = true;
+    });
+    if(!bad){ el.style.textAlign = ''; el.style.textAlignLast = ''; }
+  }
 }

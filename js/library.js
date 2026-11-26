@@ -4,46 +4,46 @@
    "حفظ الكل" يضع المكتبة كاملة في ملف واحد لنقلها أو إرسالها.
    ============================================================ */
 
-const LIB_GROUPS = ['portrait','landscape','museum','timeline'];
-const LIB_NAMES = {portrait:'طولي', landscape:'عرضي', museum:'لوحة المتحف', timeline:'المحطات / السنوات'};
-const libGroup = t => isTL(t) ? 'timeline' : t;
+const LIB_GROUPS = ['portrait','landscape','timeline','timeline68'];
+const LIB_NAMES = {portrait:'طولي', landscape:'عرضي', timeline:'لوحات السنوات 70×90', timeline68:'لوحات السنوات 60×80'};
+const libGroup = t => isTL(t) ? TK(t) : t;
+const isTLg = g => g === 'timeline' || g === 'timeline68';
 let LIB = [];   // بيانات وصفية فقط: {id, name, group, template, saved, thumb, sig, pkey} — المحتوى في IndexedDB بمفتاح lib:<id>
 
 /* ---------- محتوى لوحة واحدة من الحالة ---------- */
-function libTemplateFor(st, g){ return g !== 'timeline' ? g : (isTL(st.template) ? st.template : 'years'); }
-function libSlice(st, t){
+function libTemplateFor(st, g){ return g === 'timeline' ? 'years' : g === 'timeline68' ? 'years68' : g; }
+/* copy=false: للمقارنة فقط بدون نسخ الصور (أسرع بكثير مع الصور الكبيرة) — لا تُعدَّل النتيجة */
+function libSlice(st, t, copy = true){
   const g = libGroup(t), o = {template: t, logo: st.logo};
-  if(g === 'museum') o.museum = st.museum;
-  else if(g === 'timeline') Object.assign(o, {timeline: st.timeline, yr: st.yr, wlogo: st.wlogo});
+  if(isTLg(g)) Object.assign(o, {[g]: st[g], yr: st.yr, wlogo: st.wlogo});
   else Object.assign(o, {[g]: st[g], capfs: st.capfs, wlogo: st.wlogo});
-  return structuredClone(o);
+  return copy ? structuredClone(o) : o;
 }
 const libPk = v => v ? v.length + ':' + v.slice(-48) : '';
 /* بصمة سريعة للمحتوى: الصور تُختصر إلى طولها وآخر حروفها */
 const libSig = d => JSON.stringify(d, (k, v) => k === 'template' ? undefined : (typeof v === 'string' && v.startsWith('data:') ? libPk(v) : v));
 /* بصمة محتوى اللوحة نفسها فقط (بدون الإعدادات المشتركة مثل حجم الخط ولون الشعار) — لمنع التكرار */
-const libCsig = d => { const g = libGroup(d.template); return libSig(g === 'timeline' ? d.timeline : d[g]); };
+const libCsig = d => { const g = libGroup(d.template); return libSig(d[g]); };
 function libMainPhoto(d){
   const g = libGroup(d.template);
-  if(g === 'timeline') return (d.timeline.entries.find(e => e.photo) || {}).photo || null;
+  if(isTLg(g)) return (d[g].entries.find(e => e.photo) || {}).photo || null;
   return d[g].photo || null;
 }
 function libSuggestName(d){
   const g = libGroup(d.template), first = s => String(s || '').trim().split('\n')[0].trim().slice(0, 50);
-  if(g === 'museum') return first(d.museum.t_ar) || LIB_NAMES.museum;
-  if(g === 'timeline'){
-    const ys = d.timeline.entries.map(e => e.year).filter(Boolean);
+  if(isTLg(g)){
+    const ys = d[g].entries.map(e => e.year).filter(Boolean);
     return 'المحطات' + (ys.length ? ` ${ys[0]} – ${ys[ys.length-1]}` : '');
   }
   return first(d[g].ar) || LIB_NAMES[g];
 }
 /* هل في اللوحة عمل يستحق الحفظ؟ (ليست فارغة ولا النصوص الافتراضية) */
 function libHasContent(st, g){
-  const t = libTemplateFor(st, g), d = libSlice(st, t);
-  if(libSig(d) === libSig(libSlice(Object.assign(DEFAULTS(), {template: t}), t))) return false;
-  if(g === 'timeline') return d.timeline.entries.some(e => e.photo || e.year || e.t_ar || e.d_ar);
+  const t = libTemplateFor(st, g), d = libSlice(st, t, false);
+  if(libSig(d) === libSig(libSlice(Object.assign(DEFAULTS(), {template: t}), t, false))) return false;
+  if(isTLg(g)) return d[g].entries.some(e => e.photo || e.year || e.t_ar || e.d_ar);
   const P = d[g];
-  return !!(P.photo || (g === 'museum' ? P.t_ar || P.d_ar : P.ar || P.en));
+  return !!(P.photo || P.ar || P.en);
 }
 function libThumb(src){
   if(!src) return Promise.resolve(null);
@@ -70,7 +70,14 @@ async function libLoad(){
   try{
     const m = await idbRun('readonly', st => st.get('libmeta'));
     LIB = Array.isArray(m) ? m.filter(x => isObj(x) && typeof x.id === 'string' && LIB_GROUPS.includes(x.group)) : [];
-    for(const it of LIB) if(!it.csig){ try{ const d = await libGetData(it.id); if(isObj(d)) it.csig = libCsig(d); }catch(e){} }
+    for(const it of LIB) if(it.group === 'timeline' && it.template !== 'years') it.template = 'years';
+    // بصمة المحتوى تُحسب مرة واحدة من البيانات بعد تنظيفها (cv=2)، فلا تبدو اللوحات المحفوظة قديماً مختلفة فتتكرر
+    let upd = false;
+    for(const it of LIB) if(it.cv !== 2){
+      try{ const d = await libGetData(it.id), n = isObj(d) && normalize({...DEFAULTS(), ...d, template: it.template});
+           if(n){ it.csig = libCsig(libSlice(n, it.template, false)); it.cv = 2; upd = true; } }catch(e){}
+    }
+    if(upd) await idbRun('readwrite', st => st.put(LIB, 'libmeta'));
   }catch(e){ LIB = []; }
   libUpdateCount();
 }
@@ -81,7 +88,7 @@ async function libSaveNew(g = libGroup(S.template), name, link = true){
   if(name === undefined) name = libSuggestName(data);
   const ph = libMainPhoto(data);
   const it = {id: libNewId(), name: String(name).trim().slice(0, 80) || libSuggestName(data), group: g, template: t,
-    saved: Date.now(), sig: libSig(data), csig: libCsig(data), pkey: libPk(ph), thumb: await libThumb(ph)};
+    saved: Date.now(), sig: libSig(data), csig: libCsig(data), cv: 2, pkey: libPk(ph), thumb: await libThumb(ph)};
   LIB.push(it);
   try{ await libWrite(it, data); }
   catch(e){ LIB.pop(); showError('تعذّر الحفظ في المكتبة — مساحة المتصفح ممتلئة أو التخزين معطّل. استخدم "حفظ الكل"'); return null; }
@@ -90,7 +97,7 @@ async function libSaveNew(g = libGroup(S.template), name, link = true){
 }
 /* قبل استبدال لوحات غير محفوظة: نحفظها في المكتبة أولاً فلا يضيع شيء */
 /* محتوى مجموعة موجود في المكتبة بالضبط؟ (فلا نكرره) */
-const libFind = g => { const c = libCsig(libSlice(S, libTemplateFor(S, g))); return LIB.find(x => x.group === g && x.csig === c); };
+const libFind = g => { const c = libCsig(libSlice(S, libTemplateFor(S, g), false)); return LIB.find(x => x.group === g && x.csig === c); };
 async function libSafeguard(groups){
   const done = [];
   for(const g of groups) if(!S.libLink[g] && libHasContent(S, g) && !libFind(g)){ const it = await libSaveNew(g, undefined, false); if(it) done.push(it); }
@@ -115,11 +122,12 @@ async function libSyncAll(){
     const it = LIB.find(x => x.id === S.libLink[g]);
     if(!it){ delete S.libLink[g]; continue; }
     const t = libGroup(S.template) === g ? S.template : it.template;
-    const data = libSlice(S, t), sig = libSig(data);
+    const view = libSlice(S, t, false), sig = libSig(view);
     if(sig === it.sig){ if(it.template !== t){ it.template = t; await libWrite(it); } continue; }
+    const data = structuredClone(view);   // نسخة فقط عند وجود تغيير فعلي
     const ph = libMainPhoto(data);
     if(libPk(ph) !== it.pkey){ it.thumb = await libThumb(ph); it.pkey = libPk(ph); }
-    Object.assign(it, {sig, csig: libCsig(data), template: t, saved: Date.now()});
+    Object.assign(it, {sig, csig: libCsig(data), cv: 2, template: t, saved: Date.now()});
     await libWrite(it, data); changed = true;
   }
   if(changed) libRenderDlg();
@@ -158,8 +166,8 @@ async function libImport(arr){
   if(!Array.isArray(arr)) return r;
   for(const x of arr){
     if(!isObj(x) || typeof x.id !== 'string' || !/^[\w-]{1,64}$/.test(x.id) || !isObj(x.data)) continue;
-    if(!TEMPLATES.includes(x.data.template)) continue;
-    const n = normalize({...DEFAULTS(), ...x.data}); if(!n) continue;
+    if(x.data.template === 'museum' || !TEMPLATES.includes(legacyTpl(x.data.template))) continue;   // لوحات المتحف (تصميم محذوف) تُتجاهل
+    const n = normalize({...DEFAULTS(), ...x.data}); if(!n || libGroup(n.template) !== libGroup(legacyTpl(x.data.template))) continue;
     const t = n.template, data = libSlice(n, t), sig = libSig(data);
     const saved = Number.isFinite(x.saved) ? x.saved : 0;
     const old = LIB.find(y => y.id === x.id);
@@ -167,7 +175,7 @@ async function libImport(arr){
     if(old && old.saved >= saved){ r.kept.add(x.id); continue; }
     const ph = libMainPhoto(data), it = old || {id: x.id};
     Object.assign(it, {name: String(x.name || '').trim().slice(0, 80) || libSuggestName(data), group: libGroup(t), template: t,
-      saved: saved || Date.now(), sig, csig: libCsig(data), pkey: libPk(ph), thumb: await libThumb(ph)});
+      saved: saved || Date.now(), sig, csig: libCsig(data), cv: 2, pkey: libPk(ph), thumb: await libThumb(ph)});
     if(!old) LIB.push(it);
     await libWrite(it, data);
     old ? r.updated++ : r.added++;
@@ -207,7 +215,7 @@ function libRenderDlg(){
     <input type="text" data-libq placeholder="🔍 بحث بالاسم" value="${esc(libQuery)}">
     <div class="liblist">${items.length ? items.map(it => `
       <div class="libitem ${cur.has(it.id) ? 'cur' : ''}">
-        ${it.thumb ? `<img src="${it.thumb}" alt="">` : `<div class="noimg">${it.group === 'timeline' ? '⟿' : '▭'}</div>`}
+        ${it.thumb ? `<img src="${it.thumb}" alt="">` : `<div class="noimg">${isTLg(it.group) ? '▣' : '▭'}</div>`}
         <div class="libinfo">
           <b>${esc(it.name)}</b>
           <small>${LIB_NAMES[it.group]} · ${fmt.format(it.saved)}${cur.has(it.id) ? ' · <em>مفتوحة الآن</em>' : ''}</small>
@@ -258,7 +266,7 @@ function libCloseDlg(){ const d = document.getElementById('libdlg'); if(d.open) 
 })();
 
 async function libSaveCurrent(){
-  const g = libGroup(S.template), data = libSlice(S, libTemplateFor(S, g));
+  const g = libGroup(S.template), data = libSlice(S, libTemplateFor(S, g), false);
   const name = prompt('اسم اللوحة (لتجدها بسهولة لاحقاً):', libSuggestName(data));
   if(name === null) return;
   const it = await libSaveNew(g, name);

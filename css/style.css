@@ -6,7 +6,7 @@ aside{width:440px;flex:none;height:100vh;overflow:auto;background:#fff;border-le
 main{flex:1;display:flex;flex-direction:column;min-width:0}
 h1{font-size:20px;margin:0 0 4px;color:var(--m)}
 .sub{font-size:13px;color:#777;margin-bottom:14px}
-.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:14px}
+.tabs{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:14px}
 .tabs button{padding:10px 6px;border:2px solid var(--line);background:#faf8f5;border-radius:10px;font:700 14px Tajawal;cursor:pointer;color:#555}
 .tabs button.on{border-color:var(--m);background:var(--m);color:#fff}
 fieldset{border:1px solid var(--line);border-radius:12px;padding:12px;margin:0 0 12px}
@@ -65,26 +65,6 @@ input[type=range]{width:100%;accent-color:var(--m)}
 .portrait .cap .t,.landscape .cap .t{line-height:1.32}
 .portrait .cap .t.ar,.landscape .cap .t.ar{line-height:1.42}
 
-.timeline{width:3200px;height:1800px;background:#e8d8b9;color:#7a1c1c}
-.timeline.plain{background:#efe6d6}
-.timeline .paper{position:absolute;inset:0;pointer-events:none}
-.timeline .frame{position:absolute;inset:34px;border:3px solid rgba(122,28,28,.55);pointer-events:none}
-.timeline .frame::after{content:'';position:absolute;inset:10px;border:1px solid rgba(122,28,28,.4)}
-.timeline svg.path{position:absolute;left:0;top:0;overflow:visible}
-.timeline .tc{position:absolute;display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:4px;overflow:hidden}
-.timeline .tph{position:absolute;border:7px solid #f6efe2;box-shadow:0 6px 18px rgba(60,30,10,.35);background:#cdbb9c;overflow:hidden}
-.timeline .tph img{width:100%;height:100%;display:block}
-.timeline .tph.old img{filter:sepia(.55) grayscale(.35) contrast(1.05) brightness(.97)}
-.timeline .tc .yr{font-family:'Playfair Display',serif;font-size:76px;font-weight:800;line-height:.95;color:#7a1c1c}
-.timeline .tc .ti-ar{font-size:calc(var(--fs)*1.55);font-weight:800;direction:rtl;line-height:1.25;margin-top:6px}
-.timeline .tc .ti-en{font-size:calc(var(--fs)*.95);font-weight:700;letter-spacing:.08em;word-spacing:.15em;text-transform:uppercase;line-height:1.25;color:#5b2a20}
-.timeline .tc .ti-fr{font-size:calc(var(--fs)*.9);font-weight:500;font-style:italic;line-height:1.25;color:#5b2a20}
-.timeline .tc .t{color:#4a3426;font-weight:500;font-size:var(--fs);line-height:1.4;margin-top:6px}
-.timeline .tc .t.ar{direction:rtl;text-align:left;font-weight:700;color:#6b2420;font-size:calc(var(--fs)*1.1)}
-.timeline .end{position:absolute;text-align:left}
-.timeline .end .e-ar{font-size:48px;font-weight:800;direction:rtl;line-height:1.2}
-.timeline .end .e-en{font-size:22px;letter-spacing:.08em;word-spacing:.2em;text-transform:uppercase;font-weight:500;margin-top:10px;color:#5b2a20}
-.timeline .end .e-fr{font-size:20px;font-style:italic;color:#5b2a20;margin-top:4px}
 #errbar[hidden],#undo[hidden]{display:none}
 #errbar button{margin-inline-start:12px;background:none;border:1px solid #fff;color:#fff;border-radius:6px;padding:2px 10px;font:700 14px Tajawal,sans-serif;cursor:pointer}
 #errbar{position:fixed;bottom:0;left:0;right:0;background:#b3261e;color:#fff;padding:10px 16px;font:700 14px Tajawal,sans-serif;z-index:10;text-align:center}
@@ -94,25 +74,6 @@ input[type=range]{width:100%;accent-color:var(--m)}
 .d .ph-empty:hover{background:rgba(122,28,28,.14)!important}
 .d .ph-empty-in{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font:700 34px Tajawal,sans-serif;color:#7a1c1c;text-align:center}
 .d .ph-empty-in small{font:700 26px 'Playfair Display',serif;opacity:.7}
-.timeline .ph-empty-in{font-size:28px}
-.d .tph,.d .wph{cursor:pointer}
-
-/* ===== النصوص تحت شعار النادي — مواصفة موحّدة لكل التصاميم =====
-   كل المسافات نسبة من --u (حجم اسم النادي)، فتبقى متناسبة في أي تصميم.
-   لا يُضاف letter-spacing للعربية لأنه يكسر اتصال الحروف. */
-.hd,.whd,.w4hd{position:absolute;display:flex;flex-direction:column;align-items:center;text-align:center}
-.hd{--u:58px;left:90px;top:80px;width:760px}
-.whd{--u:84px;left:120px;top:110px;width:860px}
-.w4hd{--u:60px;color:#6f1622}
-.timeline img.logo{width:230px;height:230px}
-.timeline .hd{width:auto}   /* الشعار وحده في الزاوية */
-.timeline .tc.up{justify-content:flex-end}   /* نص المحطات العلوية يلاصق الخط مثل السفلية */
-.hd>img.logo,.whd>img.logo,.w4hd>img.logo{margin-bottom:calc(var(--u)*.6)}
-.hd .n-ar,.whd .n-ar,.w4hd .n-ar{font-size:var(--u);font-weight:800;direction:rtl;line-height:1.2;white-space:nowrap;word-spacing:.08em}
-.hd .n-en,.whd .n-en,.w4hd .n-en{font-size:calc(var(--u)*.56);font-weight:500;line-height:1.2;letter-spacing:.1em;word-spacing:.25em;text-transform:uppercase;white-space:nowrap;margin-top:calc(var(--u)*.3)}
-.hd .sl-ar,.whd .sl-ar,.w4hd .sl-ar{font-size:calc(var(--u)*.62);font-weight:700;direction:rtl;line-height:1.2;white-space:nowrap;word-spacing:.08em;color:#5b2a20;margin-top:calc(var(--u)*.75)}
-.hd .sl,.whd .sl,.w4hd .sl{font-size:calc(var(--u)*.42);font-weight:500;line-height:1.2;letter-spacing:.06em;word-spacing:.2em;text-transform:uppercase;white-space:nowrap;color:#5b2a20;margin-top:calc(var(--u)*.3)}
-.hd .sl.fr,.whd .sl.fr{text-transform:none;font-style:italic;letter-spacing:.02em;word-spacing:.12em;margin-top:calc(var(--u)*.18)}
 
 /* مسافة واضحة بين الكلمات في كل نصوص اللوحات */
 .d *{word-spacing:.06em}
@@ -141,7 +102,7 @@ input[type=range]{width:100%;accent-color:var(--m)}
   #errbar{bottom:57px}
 }
 
-/* ===== لوحة لكل سنة (years): عرضي 90×70 سم وطولي 70×90 سم — المواضع في years.js ===== */
+/* ===== لوحة لكل سنة (years): طولي 70×90 سم و60×80 سم — المواضع في years.js ===== */
 .years{background:#ecdfc4;color:#3c3c3c}
 .years.plain{background:#efe6d6}
 .years .paper{position:absolute;inset:0;pointer-events:none}
@@ -182,22 +143,6 @@ input[type=range]{width:100%;accent-color:var(--m)}
 .move input[type=range]:disabled{opacity:.3;cursor:not-allowed}
 .move [data-movehint]:empty{display:none}
 
-/* ===== لوحة المتحف (museum) 70×90 سم ===== */
-.museum{color:#fff;font-family:'Thmanyah Sans','thmanyah sans','Thmanyah','thmanyahsans',Tajawal,sans-serif}
-.museum .mshade{position:absolute;inset:0;pointer-events:none;background:radial-gradient(95% 75% at 62% 30%,rgba(130,98,60,0) 45%,rgba(130,98,60,.75) 100%),linear-gradient(to bottom,rgba(130,98,60,0) 55%,rgba(130,98,60,.45) 100%)}
-.museum .mph{position:absolute;left:0;width:100%;overflow:hidden;cursor:pointer}
-.museum .mph img{width:100%;height:100%;display:block}
-.museum .mph.ph-empty{border:none!important;background:rgba(255,255,255,.08)!important}
-.museum img.mlogo{position:absolute;left:100px;top:100px;width:150px;height:150px;object-fit:contain}
-.museum img.mlogo.white{filter:brightness(0) invert(1)}
-.museum .mtx{position:absolute;left:150px;right:150px;top:330px;overflow:hidden;text-shadow:0 1px 14px rgba(60,35,20,.18)}
-.museum .mt{font-weight:700;font-size:calc(var(--fs)*1.12);line-height:1.35}
-.museum .md{white-space:pre-line;font-weight:400;font-size:var(--fs);line-height:1.5;text-align:justify}
-.museum .ar{direction:rtl;text-align:right}
-.museum .md.ar{text-align:justify;text-align-last:right}
-.museum .en{direction:ltr;text-align:left;font-size:calc(var(--fs)*.78);opacity:.92}
-.museum .mt.en{font-size:calc(var(--fs)*.9);margin-top:calc(var(--fs)*1)}
-.museum .md.en{text-align:justify;text-align-last:left;line-height:1.45}
 .d.wlogo img.logo{filter:brightness(0) invert(1)!important}
 
 /* ===== مكتبة اللوحات المحفوظة ===== */
